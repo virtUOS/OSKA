@@ -1,0 +1,11 @@
+pluginclassname=OSKA
+pluginname=OSKA
+origin=OSKA
+version=1.0
+studipMinVersion=4.0
+studipMaxVersion=4.99.99
+category=Kommunikation und Zusammenarbeit
+displayname=Mentoringprogramm OSKA
+summary=Mentoringprogramm für Erstsemester
+description=Das OSKA Plugin bietet eine Plattform für das Mentoringprogramm OSKA, welches Erstsemesterstudierenden aller Studienprogramme im Bachelor und Diplom an der Uni Osnabrück für einen erfolgreichen Studieneinstieg OSKAs (OSnabrücker Kommiliton*in für StudienAnfänger*innen) zur Seite stellt.
+keywords=Mentoring; Studieneinstiegshilfe für Erstsemester
