@@ -14,6 +14,8 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
     
     public function __construct()
     {
+        global $perm;
+        
         parent::__construct();
 
         $is_first_sem = true;
@@ -41,30 +43,39 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
         
         // add OSKA plugin to widget_user in unavailable column so it is not displayed
         // if user is not first semester Bachelor student
-        if (!$is_first_sem || !$is_bachelor) {
-            
+        if (!$is_first_sem || !$is_bachelor || $perm->have_perm('tutor')) {
+
             // if OSKA plugin is already on unavailable column do nothing
             if ($col != 2) {
                 
                 // if OSKA plugin is already displayed, remove it from display
-                if ($col) {
+                if ($col !== FALSE) {
                     $query = "DELETE FROM widget_user WHERE pluginid = ? AND range_id = ?";
                     DBManager::get()->execute($query, [$this->getPluginId(), $GLOBALS['user']->id]);
                 }
                 // add plugin into widget_user to prevent it from being loaded and
                 // from being added to available widgets
-                $query = "INSERT INTO widget_user 
-                            (`pluginid`, `position`, `range_id`, `col`) 
-                          VALUES (?,?,?,?)";
+                $query = "INSERT INTO widget_user (`pluginid`, `position`, `range_id`, `col`) VALUES (?,?,?,?)";
                 DBManager::get()->execute($query, [$this->getPluginId(), 0, $GLOBALS['user']->id, 2]);
+
+                // refresh page to show change immediately
                 header("Refresh:0");
                 die();
             }
         } else {
             if ($col === FALSE) {
-                // display on page
-                WidgetHelper::addWidget($this->getPluginId(), $GLOBALS['user']->id);
-                WidgetHelper::storeNewPositions($this->getPluginId(), 2, 0);
+                // display widget on page under 
+                $db = DBManager::get();
+
+                // Push all entries in the column one position away
+                $db->execute("UPDATE widget_user SET position = position + 1 WHERE range_id = ? AND col = ? AND position >= ?", 
+                            [$GLOBALS['user']->id, 0, 2]);
+
+                // Insert element
+                $db->execute("INSERT INTO widget_user (`pluginid`, `position`, `range_id`, `col`) VALUES (?,?,?,?)", 
+                            [$this->getPluginId(), 2, $GLOBALS['user']->id, 0]);
+
+                // refresh page to show change immediately
                 header("Refresh:0");
                 die();
             }
