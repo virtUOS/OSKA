@@ -15,6 +15,60 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
     public function __construct()
     {
         parent::__construct();
+
+        $is_first_sem = true;
+        $is_bachelor = true;
+        
+        // Show widget only to first semester Bachelor students
+        // go through all subjects of the user and check if user is first semester and Bachelor student
+        $studycourses = new SimpleCollection(UserStudyCourse::findByUser($GLOBALS['user']->id));
+        
+        foreach ($studycourses as $studycourse) {
+            if ($studycourse->semester > 1) {
+                $is_first_sem = false;
+            }
+            if ($studycourse->degree_name != "Bachelor") {
+                $is_bachelor = false;
+            }
+        }
+        
+        // retrieve column of OSKA plugin on overview page to check for access permission later
+        // and whether or not to display it
+        $query = "SELECT col FROM widget_user where pluginid = ? AND range_id = ?";
+            $statement = DBManager::get()->prepare($query);
+            $statement->execute([$this->getPluginId(), $GLOBALS['user']->id]);
+            $col = $statement->fetchColumn();
+        
+        // add OSKA plugin to widget_user in unavailable column so it is not displayed
+        // if user is not first semester Bachelor student
+        if (!$is_first_sem || !$is_bachelor) {
+            
+            // if OSKA plugin is already on unavailable column do nothing
+            if ($col != 2) {
+                
+                // if OSKA plugin is already displayed, remove it from display
+                if ($col) {
+                    $query = "DELETE FROM widget_user WHERE pluginid = ? AND range_id = ?";
+                    DBManager::get()->execute($query, [$this->getPluginId(), $GLOBALS['user']->id]);
+                }
+                // add plugin into widget_user to prevent it from being loaded and
+                // from being added to available widgets
+                $query = "INSERT INTO widget_user 
+                            (`pluginid`, `position`, `range_id`, `col`) 
+                          VALUES (?,?,?,?)";
+                DBManager::get()->execute($query, [$this->getPluginId(), 0, $GLOBALS['user']->id, 2]);
+                header("Refresh:0");
+                die();
+            }
+        } else {
+            if ($col === FALSE) {
+                // display on page
+                WidgetHelper::addWidget($this->getPluginId(), $GLOBALS['user']->id);
+                WidgetHelper::storeNewPositions($this->getPluginId(), 2, 0);
+                header("Refresh:0");
+                die();
+            }
+        }
         
         // set up translation domain
         bindtextdomain('OSKA', dirname(__FILE__) . '/locale');
@@ -101,6 +155,15 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
     public function getIconNavigation($course_id, $last_visit, $user_id)
     {
         return NULL;
+    }
+    
+    public function isActivatableForContext(Range $context) {
+        // hard code which course this plugin is activatable for via course ID
+        if ($context->id == '3f28a0f6c986f45e434ea2433f53a936') {
+            return true;
+        }
+        
+        return false;
     }
 
 }
