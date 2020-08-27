@@ -8,6 +8,9 @@
  * @category Plugin
  **/
 
+require_once 'models/OskaMentors.php';
+require_once 'models/OskaMentees.php';
+require_once 'models/OskaMatches.php';
 
 class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
 {
@@ -15,12 +18,11 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
     public function __construct()
     {
         global $perm;
-        
+
         parent::__construct();
 
         // set up translation domain
         bindtextdomain('OSKA', dirname(__FILE__) . '/locale');
-
     }
 
     /**
@@ -30,7 +32,7 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
     {
         return 'OSKA';
     }
-    
+
     /**
     * Returns the tab navigation for the OSKA plugin in the given course.
     *
@@ -39,7 +41,7 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
     public function getTabNavigation($course_id) 
     {
         global $perm;
-        
+
         // only tutors and lecturers have access to the OSKA administration
         $perm->check('tutor');
         
@@ -63,24 +65,24 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
     {
         parent::perform($unconsumed_path);
     }
-    
+
     /**
      * Returns the portal widget template.
      */
     function getPortalTemplate()
     {
         global $perm;
-        
+
         PageLayout::addStylesheet($this->getPluginURL() . '/css/oska.css');
-        
+
         $template_path = $this->getPluginPath() . '/templates';
         $template_factory = new Flexi_TemplateFactory($template_path);
-        
+
         // Show widget only to first semester Bachelor students
         $is_first_sem = true;
         $is_bachelor = true;
         $studycourses = new SimpleCollection(UserStudyCourse::findByUser($GLOBALS['user']->id));
-        
+
         // go through all subjects of the user and check if user is first semester and Bachelor student
         foreach ($studycourses as $studycourse) {
             if ($studycourse->semester > 1) {
@@ -90,7 +92,7 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
                 $is_bachelor = false;
             }
         }
-        
+
         // show info about OSKA if not first semester Bachelor student
         if (!$is_first_sem || !$is_bachelor || $perm->have_perm('tutor')) {
             $template = $template_factory->open('widget_info');
@@ -103,7 +105,7 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
 
         return $template;
     }
-    
+
     /**
     * Returns the course summary page template.
     *
@@ -113,7 +115,7 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
     {
         return NULL;
     }
-    
+
     /**
     * Returns the icon navigation object.
     *
@@ -125,13 +127,13 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
     {
         return NULL;
     }
-    
+
     public function isActivatableForContext(Range $context) {
         // hard code which course this plugin is activatable for via course ID
         if ($context->id == '3f28a0f6c986f45e434ea2433f53a936') {
             return true;
         }
-        
+
         return false;
     }
 
