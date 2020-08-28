@@ -25,4 +25,35 @@ class OskaMentors extends SimpleORMap
     {
         parent::__construct($id);
     }
+
+    public function getProfile()
+    {
+        $mentor->lehramt = $this->teacher;
+        $mentor->lehramt_detail = $this->getMentorAbilities('lehramt_detail');
+        $mentor->firstgen = $this->getMentorAbilities('firstgen');
+        $mentor->children = $this->getMentorAbilities('children');
+        $mentor->apprentice = $this->getMentorAbilities('apprentice');
+        $mentor->migration = $this->getMentorAbilities('migration');
+
+        return $mentor;
+    }
+
+    public function getMentorAbilities($type)
+    {
+        $abilities = json_decode($this->abilities);
+
+        if (in_array($abilities->$type, [-1, 0, 1, 2])) {
+            return $abilities->$type;
+        } else {
+            return 2;
+        }
+    }
+
+    public function setMentorAbilities($type, $value)
+    {
+        $abilities = json_decode($this->abilities);
+        $abilities->$type = $value;
+
+        $this->abilities = json_encode($abilities);
+    }
 }
