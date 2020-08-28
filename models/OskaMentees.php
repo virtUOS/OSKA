@@ -24,4 +24,8 @@ class OskaMentees extends SimpleORMap
     {
         parent::__construct($id);
     }
+    
+    public function register($id = NULL, $data) {
+        // TODO store mentee data
+    }
 }

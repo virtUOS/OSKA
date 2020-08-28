@@ -73,10 +73,13 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
     {
         global $perm;
 
-        PageLayout::addStylesheet($this->getPluginURL() . '/css/oska.css');
+        PageLayout::addStylesheet($this->getPluginURL() . '/css/oska.css?v=21');
+        PageLayout::addScript($this->getPluginURL() . '/js/oska.js');
 
         $template_path = $this->getPluginPath() . '/templates';
         $template_factory = new Flexi_TemplateFactory($template_path);
+        
+        //TODO if mentee already registered -> show 'searching' template, else show what's below
 
         // Show widget only to first semester Bachelor students
         $is_first_sem = true;
@@ -95,13 +98,22 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
 
         // show info about OSKA if not first semester Bachelor student
         if (!$is_first_sem || !$is_bachelor || $perm->have_perm('tutor')) {
-            $template = $template_factory->open('widget_info');
-            $template->title = _('Mein OSKA');
+            $template = $template_factory->open('widget_searching');
         } else {
             // show OSKA widget otherwise
-            $template = $template_factory->open('widget_index');
-            $template->title = _('Mein OSKA');
+
+            $show_form = Request::option('show_form');
+            
+            if ($show_form) {
+                // show form if button was clicked
+                $template = $template_factory->open('widget_form');
+            } else {
+                // show oska info for first semester students otherwise
+                $template = $template_factory->open('widget_index');
+            }
         }
+        
+        $template->title = _('Mein OSKA');
 
         return $template;
     }
