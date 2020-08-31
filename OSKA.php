@@ -73,43 +73,76 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
     {
         global $perm;
 
-        PageLayout::addStylesheet($this->getPluginURL() . '/css/oska.css?v=21');
+        PageLayout::addStylesheet($this->getPluginURL() . '/css/oska.css?v=23');
         PageLayout::addScript($this->getPluginURL() . '/js/oska.js');
 
         $template_path = $this->getPluginPath() . '/templates';
         $template_factory = new Flexi_TemplateFactory($template_path);
         
-        //TODO if mentee already registered -> show 'searching' template, else show what's below
-
-        // Show widget only to first semester Bachelor students
-        $is_first_sem = true;
-        $is_bachelor = true;
-        $studycourses = new SimpleCollection(UserStudyCourse::findByUser($GLOBALS['user']->id));
-
-        // go through all subjects of the user and check if user is first semester and Bachelor student
-        foreach ($studycourses as $studycourse) {
-            if ($studycourse->semester > 1) {
-                $is_first_sem = false;
-            }
-            if ($studycourse->degree_name != "Bachelor") {
-                $is_bachelor = false;
-            }
-        }
-
-        // show info about OSKA if not first semester Bachelor student
-        if (!$is_first_sem || !$is_bachelor || $perm->have_perm('tutor')) {
-            $template = $template_factory->open('widget_searching');
-        } else {
-            // show OSKA widget otherwise
-
-            $show_form = Request::option('show_form');
+        // if the mentee is already registered, show the searching template
+        // if the mentee is also matched, show their tutor
+        $mentee = OskaMentees::find($GLOBALS['user']->id);
+        if ($mentee) {
+            if ($mentee->hasTutor()) {
             
-            if ($show_form) {
-                // show form if button was clicked
-                $template = $template_factory->open('widget_form');
+                $template = $template_factory->open('widget_mentor');
+                
+                $mentor = OskaMatches::getMentor($GLOBALS['user']->id)['mentor_id'];
+                $template->avatar = Avatar::getAvatar($mentor);
+
+                // mentor data
+                $user = User::find($mentor);
+                $template->mentor_name = $user->username;
+                $template->mentor_desc = OskaMentors::getMentorDescription($mentor);
+
+                // Fachbereiche / Institutes
+                $study_institutes = [];
+                if ($user->perms !== 'dozent') {
+                    if (count($user->institute_memberships) > 0 
+                            && Visibility::verify('studying', $mentor)) {
+                            
+                        $study_institutes = $user->institute_memberships->filter(function ($a) {
+                            return $a->inst_perms === 'user';
+                        });
+                        $template->study_institutes = $study_institutes;
+                    }
+                }
+
             } else {
-                // show oska info for first semester students otherwise
-                $template = $template_factory->open('widget_index');
+                $template = $template_factory->open('widget_searching');
+            }
+        } else {
+
+            // Show widget only to first semester Bachelor students
+            $is_first_sem = true;
+            $is_bachelor = true;
+            $studycourses = new SimpleCollection(UserStudyCourse::findByUser($GLOBALS['user']->id));
+
+            // go through all subjects of the user and check if user is first semester and Bachelor student
+            foreach ($studycourses as $studycourse) {
+                if ($studycourse->semester > 1) {
+                    $is_first_sem = false;
+                }
+                if ($studycourse->degree_name != "Bachelor") {
+                    $is_bachelor = false;
+                }
+            }
+
+            // show info about OSKA if not first semester Bachelor student
+            if (!$is_first_sem || !$is_bachelor || $perm->have_perm('tutor')) {
+                $template = $template_factory->open('widget_info');
+            } else {
+                // show OSKA widget otherwise
+
+                $show_form = Request::option('show_form');
+                
+                if ($show_form) {
+                    // show form if button was clicked
+                    $template = $template_factory->open('widget_form');
+                } else {
+                    // show oska info for first semester students otherwise
+                    $template = $template_factory->open('widget_index');
+                }
             }
         }
         

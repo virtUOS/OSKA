@@ -55,4 +55,9 @@ class OskaMatches extends SimpleORMap
 
         return $issues;
     }
+    
+    public function getMentor($mentee_id)
+    {
+        return self::findOneBySQL('mentee_id = ?', array($mentee_id));
+    }
 }

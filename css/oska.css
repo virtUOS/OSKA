@@ -1,5 +1,6 @@
 #oska-widget {
     margin: 2%;
+    overflow: auto;
 }
 
 .oska-float {
@@ -71,4 +72,11 @@
     height:16px;
     margin:1px 5px 0 -8px;
     width:16px;
+}
+
+.oska-found {
+    text-align: center;
+    padding-bottom: 2px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid black;
 }

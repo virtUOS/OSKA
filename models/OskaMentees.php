@@ -25,7 +25,29 @@ class OskaMentees extends SimpleORMap
         parent::__construct($id);
     }
     
-    public function register($id = NULL, $data) {
+    /**
+    * Saves a user as mentee and their given data in db
+    *
+    * @param id the user ID
+    * @param data array of mentee data: (
+    *               [studycourse] => string,
+    *               [teacher]     => int,
+    *               [gender]      => int,
+    *               [migrant]     => int,
+    *               [first_gen]   => int,
+    *               [children]    => int,
+    *               [apprentice]  => int)
+    */
+    public function register($id = NULL, $data) 
+    {
         // TODO store mentee data
+    }
+    
+    /**
+    * Returns whether a mentee already has a matched tutor
+    */
+    public function hasTutor()
+    {
+        return $this->has_tutor;
     }
 }

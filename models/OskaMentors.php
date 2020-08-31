@@ -56,4 +56,13 @@ class OskaMentors extends SimpleORMap
 
         $this->abilities = json_encode($abilities);
     }
+    
+    public function getMentorDescription($id = NULL)
+    {
+        if (self::find($id)) {
+            return self::find($id)->description;
+        } else {
+            return NULL;
+        }
+    }
 }

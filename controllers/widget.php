@@ -26,7 +26,7 @@ class WidgetController extends PluginController {
         
         OskaMentees::register($user_id, $data);
         
-        StudipController::redirect('../../dispatch.php/start');
+        $this->redirect('../../dispatch.php/start');
         
     }
     
