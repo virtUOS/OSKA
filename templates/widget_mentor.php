@@ -13,5 +13,5 @@
         <? endforeach ?>
     </p>
         
-    <p><?= $mentor_desc ?></p>
+    <p><?= htmlReady($mentor_desc) ?></p>
 </div>

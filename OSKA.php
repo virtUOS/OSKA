@@ -73,7 +73,7 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
     {
         global $perm;
 
-        PageLayout::addStylesheet($this->getPluginURL() . '/css/oska.css?v=23');
+        PageLayout::addStylesheet($this->getPluginURL() . '/css/oska.css');
         PageLayout::addScript($this->getPluginURL() . '/js/oska.js');
 
         $template_path = $this->getPluginPath() . '/templates';
@@ -82,6 +82,7 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
         // if the mentee is already registered, show the searching template
         // if the mentee is also matched, show their tutor
         $mentee = OskaMentees::find($GLOBALS['user']->id);
+
         if ($mentee) {
             if ($mentee->hasTutor()) {
             
@@ -139,6 +140,7 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
                 if ($show_form) {
                     // show form if button was clicked
                     $template = $template_factory->open('widget_form');
+                    $template->studycourses = $studycourses;
                 } else {
                     // show oska info for first semester students otherwise
                     $template = $template_factory->open('widget_index');

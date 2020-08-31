@@ -14,17 +14,23 @@ class WidgetController extends PluginController {
     
         CSRFProtection::verifyUnsafeRequest();
 
-        $data = [
+        $preferences = [
             'studycourse'   => Request::option('studycourse'),
-            'teacher'       => Request::int('teacher'),
             'gender'        => Request::int('gender'),
             'migrant'       => Request::int('migrant'),
             'first_gen'     => Request::int('first_generation'),
             'children'      => Request::int('children'),
             'apprentice'    => Request::int('apprentice')
         ];
+
+        $data = [
+            'user_id'       => $GLOBALS['user']->id,
+            'teacher'       => Request::int('teacher'),
+            'has_tutor'     => 0,
+            'preferences'   => json_encode($preferences)
+        ];
         
-        OskaMentees::register($user_id, $data);
+        OskaMentees::register($data);
         
         $this->redirect('../../dispatch.php/start');
         

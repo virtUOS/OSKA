@@ -8,12 +8,17 @@
         <form class="default" action="<?= PluginEngine::getLink('OSKA/widget/add_mentee') ?>" 
             method="post" id="oska-add-mentee">
         <?= CSRFProtection::tokenTag() ?>
+        
         <fieldset class="oska-form-general">
         
             <div class="oska-form-flex oska-form-flex-big">
                 <label for="studycourse"><?= _('Dein Studiengang') ?><br>
-                <select>
-                </select></label>
+                <select name="studycourse">
+                <? foreach($studycourses as $studycourse): ?>
+                    <option value="<?= $studycourse->fach_id ?>"><?= htmlReady(_($studycourse->studycourse_name)) ?></option>
+                <? endforeach ?>
+                </select>
+                </label>
             </div>
    
             <div class="oska-form-flex">

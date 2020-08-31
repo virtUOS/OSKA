@@ -38,9 +38,9 @@ class OskaMentees extends SimpleORMap
     *               [children]    => int,
     *               [apprentice]  => int)
     */
-    public function register($id = NULL, $data) 
+    public function register($data) 
     {
-        // TODO store mentee data
+        self::create($data);
     }
     
     /**
