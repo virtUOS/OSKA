@@ -14,23 +14,6 @@
     padding-right: 2%;
 }
 
-.oska-form-general {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-}
-
-.oska-form-flex {
-    flex: 0 1 auto;
-    margin-left: 2%;
-    margin-right: 2%;
-}
-
-.oska-form-flex-big {
-    flex-grow: 2;
-}
-
 .oska-form-prefs {
     display: flex;
     flex-wrap: wrap;

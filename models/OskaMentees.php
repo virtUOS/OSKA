@@ -40,7 +40,7 @@ class OskaMentees extends SimpleORMap
     */
     public function register($data) 
     {
-        self::create($data);
+        return self::create($data);
     }
     
     /**
