@@ -50,15 +50,10 @@ function oska_prefs() {
 function toggle_teacher_type() {
     $(document).on('change', 'input:radio[name="teacher"]', function(event) {
         if ($(this).val() == 1) {
-        console.log("Test");
-            $('input:radio[name="teacher_type"]').each(function(i) {
-                $(this).prop('disabled', false);  
-            });
+            $('#teacher-type').show();
         }
         if ($(this).val() != 1) {
-            $('input:radio[name="teacher_type"]').each(function(i) {
-                $(this).prop('disabled', true);  
-            });
-        }
+            $('#teacher-type').hide();  
+        };
     });
 }

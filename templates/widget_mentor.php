@@ -4,7 +4,7 @@
         dir auf. Wir wünschen dir viel Erfolg in deinem ersten Semester und viel 
         Spaß mit deinem OSKA.
     </div>
-    <div class="oska-float"><?= $avatar->getImageTag(Avatar::NORMAL) ?></div>
+    <div class="oska-float oska-avatar"><?= $avatar->getImageTag(Avatar::MEDIUM) ?></div>
     
     <p>
         <b><?= htmlReady($mentor_name) ?></b><br>

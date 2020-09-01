@@ -11,8 +11,9 @@
         
         <fieldset class="oska-form-general">
         
-            <div class="oska-form-flex oska-form-flex-big">
-                <label for="studycourse"><?= _('Dein Studiengang') ?><br>
+            <section class="col-5">
+            <div>
+                <label class="label_text"><?= _('Dein Studiengang') ?><br>
                 <select name="studycourse">
                 <? foreach($studycourses as $studycourse): ?>
                     <option value="<?= $studycourse->fach_id ?>"><?= htmlReady(_($studycourse->studycourse_name)) ?></option>
@@ -20,42 +21,66 @@
                 </select>
                 </label>
             </div>
-   
-            <div class="oska-form-flex">
-                <label for="teacher"><?= _('Studierst du mit dem Ziel Lehramt?') ?><br>
-                <input type="radio" name="teacher" value="1">Ja 
-                <input type="radio" name="teacher" value="0" checked>Nein</label>
-            </div>
+            </section>
+              
+            <section class="col-2">
+                <span class="label-text"><?= _('Studierst du mit dem Ziel Lehramt?') ?></span>
+                <div class="hgroup">
+                    <label>
+                        <input type="radio" name="teacher" value="1"> <?= _('Ja') ?>
+                    </label>
+                    <label>
+                        <input type="radio" name="teacher" value="0" checked> <?= _('Nein') ?>
+                    </label>
+                </div>
+            </section>
             
-            <div class="oska-form-flex" id="teacher-type">
-                <label for="teacher_type"><?= _('Wenn ja, welches Lehramt strebst du an?') ?><br>
-                <input type="radio" name="teacher_type" value="beruf" disabled><?= _('Berufliche Bildung') ?> 
-                <input type="radio" name="teacher_type" value="erziehung" disabled><?= _('Bildung, Erziehung und Unterricht') ?>
-                <input type="radio" name="teacher_type" value="schule" disabled><?= _('Gymnasium, Haupt- und Realschule') ?> 
-                </label>
-            </div>
+            <section class="col-4" id="teacher-type" style="display: none;">
+                <span class="label-text"><?= _('Wenn ja, welches Lehramt strebst du an?') ?></span>
+                <div class="hgroup">
+                    <label>
+                        <input type="radio" name="teacher_type" value="beruf"> <?= _('Berufliche Bildung') ?>
+                    </label>
+                    <label>
+                        <input type="radio" name="teacher_type" value="erziehung"> <?= _('Bildung, Erziehung und Unterricht') ?>
+                    </label>
+                    <label>
+                        <input type="radio" name="teacher_type" value="schule"><?= _('Gymnasium, Haupt- und Realschule') ?> 
+                    </label>
+                </div>
+            </section>
             
-            <div class="oska-form-flex">
-                <label for="gender"><?= _('Welches Geschlecht sollte dein OSKA haben?') ?><br>
-                <input type="radio" name="gender" value="0" checked>egal 
-                <input type="radio" name="gender" value="1">männlich 
-                <input type="radio" name="gender" value="2">weiblich 
-                <input type="radio" name="gender" value="3">divers </label>
-            </div>
+            <section>
+                <span class="label-text"><?= _('Welches Geschlecht sollte dein OSKA haben?') ?></span>
+                <div class="hgroup">
+                    <label>
+                        <input type="radio" name="gender" value="0" checked> <?= _('egal') ?> 
+                    </label>
+                    <label>
+                        <input type="radio" name="gender" value="1"> <?= _('männlich') ?> 
+                    </label>
+                    <label>
+                        <input type="radio" name="gender" value="2"> <?= _('weiblich') ?>
+                    </label>
+                    <label> 
+                        <input type="radio" name="gender" value="3"> <?= _('divers') ?> 
+                    </label>
+                </div>
+            </section>
         </fieldset>
         
-        <fieldset class="oska-form-general oska-form-prefs">
+        <fieldset>
         <label>
             Bei meinem OSKA ist mir besonders wichtig: 
             (Wenn dir einzelne Eigenschaften bei deinem OSKA wichtig sind, 
             kannst du diese in die untenstehende Box ziehen.)
         </label>
-        <table class="oska-pref-table">
-            <tr>
-            <td class="oska-pref-list" data-group="1" title="<?= _('Element hier ablegen') ?>">
-                
-            </td>
-            <td class="oska-pref-list" data-group="0">
+        
+        <div class="oska-form-prefs">
+            <div class="oska-pref-list" data-group="1" title="<?= _('Element hier ablegen') ?>">
+            </div>
+
+            <div class="oska-pref-list oska-pref-container" data-group="0">
                 <div class="oska-pref-item">
                 ... dass er/sie einen Migrationshintergrund hat
                 <input type="hidden" name="migrant" value="0">
@@ -72,9 +97,9 @@
                     ... dass er/sie vor dem Studium eine duale Ausbildung gemacht hat
                     <input type="hidden" name="apprentice" value="0">
                 </div>
-            </td>
-            </tr>
-        </table>
+            </div>
+
+        </div>
         
         </fieldset>
         <?= Studip\Button::create(_('OSKA für mich finden'), 'oska_matching_button', 
