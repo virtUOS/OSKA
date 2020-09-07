@@ -144,6 +144,7 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
                 } else {
                     // show oska info for first semester students otherwise
                     $template = $template_factory->open('widget_index');
+                    $template->oska_image_url = $this->getPluginURL() . '/images/OSKA.jpg';
                 }
             }
         }

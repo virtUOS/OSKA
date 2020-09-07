@@ -17,15 +17,15 @@ class WidgetController extends PluginController {
         $preferences = [
             'studycourse'   => Request::option('studycourse'),
             'gender'        => Request::int('gender'),
-            'migrant'       => Request::int('migrant'),
-            'first_gen'     => Request::int('first_generation'),
+            'migration'       => Request::int('migration'),
+            'firstgen'     => Request::int('firstgen'),
             'children'      => Request::int('children'),
             'apprentice'    => Request::int('apprentice')
         ];
 
         $data = [
             'user_id'       => $GLOBALS['user']->id,
-            'teacher'       => Request::int('teacher'),
+            'teacher'       => Request::int('lehramt'),
             'has_tutor'     => 0,
             'preferences'   => json_encode($preferences)
         ];
@@ -35,5 +35,5 @@ class WidgetController extends PluginController {
         $this->redirect('../../dispatch.php/start');
         
     }
-    
+
 }

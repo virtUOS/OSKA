@@ -1,6 +1,6 @@
 <div id="oska-widget">
-    <div class="oska-float"><img src="https://via.placeholder.com/300x200"></div>
-    <p>OSKA? Was ist das überhaupt? OSKA steht für Osnabrücker Kommiliton*innen für 
+    <img src="<?= $oska_image_url ?>" width="55%" height="55%" class="oska-float">
+    <p><?= _('OSKA? Was ist das überhaupt? OSKA steht für Osnabrücker Kommiliton*innen für 
 Studien-Anfänger*innen und ist die Bezeichnung für ausgebildete Studierende der 
 Universität Osnabrück, welche dich zum Start deines Studiums an der Universität 
 Osnabrück unterstützen. Wie wird mein Studienalltag in Osnabrück werden? Lerne 
@@ -26,7 +26,7 @@ deiner Fachrichtung.</p>
 für mich finden“ an. Die OSKAs werden individuell auf deinen Studiengang und 
 deinen Bedürfnissen mittels automatisiertem Auswahlverfahren (Matching) 
 zugeteilt. Dafür benötigen wir im nächsten Schritt ein paar Informationen zu 
-deiner Person sowie deinen Wünschen an deinen OSKA.</p>
+deiner Person sowie deinen Wünschen an deinen OSKA.') ?></p>
         <center><?= Studip\Button::create(_('OSKA für mich suchen'), 'oska_search_button', 
         ['class' => 'search', 'id' => 'open-oska-form']) ?></center>
 </div>

@@ -27,7 +27,7 @@
 
 .oska-pref-item {
     margin: 2%;
-    padding: 2px;
+    padding: 0.5em;
     border: black solid 1px;
     background-color: white;
     cursor: move;

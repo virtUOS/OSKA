@@ -48,7 +48,7 @@ function oska_prefs() {
 }
 
 function toggle_teacher_type() {
-    $(document).on('change', 'input:radio[name="teacher"]', function(event) {
+    $(document).on('change', 'input:radio[name="lehramt"]', function(event) {
         if ($(this).val() == 1) {
             $('#teacher-type').show();
         }
