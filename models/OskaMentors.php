@@ -57,7 +57,7 @@ class OskaMentors extends SimpleORMap
         $this->abilities = json_encode($abilities);
     }
     
-    public function getMentorDescription($id = NULL)
+    public static function getMentorDescription($id = NULL)
     {
         if (self::find($id)) {
             return self::find($id)->description;
@@ -65,4 +65,17 @@ class OskaMentors extends SimpleORMap
             return NULL;
         }
     }
+    
+    public function getMentorStudycourses()
+    {
+        $studycourses = new SimpleCollection(UserStudyCourse::findByUser($this->user_id));
+        
+        $studycourse_data = [];
+        foreach ($studycourses as $studycourse) {
+            $studycourse_data[$studycourse->fach_id] = $studycourse->studycourse_name;
+        }
+        
+        return $studycourse_data;
+    }
+    
 }
