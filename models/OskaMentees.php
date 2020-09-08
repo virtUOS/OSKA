@@ -24,7 +24,7 @@ class OskaMentees extends SimpleORMap
     {
         parent::__construct($id);
     }
-    
+
     /**
     * Saves a user as mentee and their given data in db.
     *
@@ -42,13 +42,18 @@ class OskaMentees extends SimpleORMap
     {
         return self::create($data);
     }
-    
+
     /**
     * Returns whether a mentee already has a matched tutor.
     */
     public function hasTutor()
     {
         return $this->has_tutor;
+    }
+
+    public function setHasTutor($val)
+    {
+        $this->has_tutor = $val;
     }
     
     /**
@@ -93,5 +98,27 @@ class OskaMentees extends SimpleORMap
             return 0;
         }
     }
-    
+
+    public function countMentees($fach_selection)
+    {
+        return count(self::findAllMentees(1, null, $fach_selection));
+    }
+
+    public function findAllMentees($lower_bound = 1, $elements_per_page = null, $fach_id = null)
+    {
+        $sql = "SELECT * FROM oska_mentees JOIN user_studiengang ON oska_mentees.user_id = user_studiengang.user_id";
+        if($fach_id != null) {
+            $sql .= " WHERE fach_id = '" . $fach_id . "'";
+        }
+        if($elements_per_page != null){
+            $sql .= " LIMIT ". $lower_bound. ', '. $elements_per_page;
+        }
+
+        $statement = DBManager::get()->prepare($sql);
+        $statement->execute($parameters);
+        $mentees = $statement->fetchAll();
+
+        return $mentees;
+    }
+
 }

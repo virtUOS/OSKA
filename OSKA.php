@@ -47,7 +47,9 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
         
         if ($perm->have_perm('dozent')) {
             $navigation = new Navigation($this->getPluginName(), PluginEngine::getURL('OSKA/admin/index'));
-            $navigation->addSubNavigation('admin', new Navigation(_('Admin'), PluginEngine::getURL('OSKA/admin/index')));
+            $navigation->addSubNavigation('admin', new Navigation(_('Übersicht'), PluginEngine::getURL('OSKA/admin/index')));
+            $navigation->addSubNavigation('matches', new Navigation(_('Matches'), PluginEngine::getURL('OSKA/admin/matches')));
+            $navigation->addSubNavigation('mentees', new Navigation(_('Mentees'), PluginEngine::getURL('OSKA/admin/mentees')));
         } else {
             $navigation = new Navigation($this->getPluginName(), PluginEngine::getURL('OSKA/mentoring/index'));
             $navigation->addSubNavigation('mentor_profile', new Navigation(_('Profil'), PluginEngine::getURL('OSKA/mentoring/index')));

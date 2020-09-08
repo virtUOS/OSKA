@@ -112,7 +112,7 @@ class MentoringController extends PluginController {
         if(!$perm->have_studip_perm('tutor', $this->cid)) {
             throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
         }
-        
+
         if(Request::get('mentor_name') != '' && Request::get('mentee_name') != '') {
             $mentor = User::findByUsername(Request::option('mentor_name'));
             $mentee = User::findByUsername(Request::option('mentee_name'));

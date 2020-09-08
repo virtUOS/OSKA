@@ -65,7 +65,7 @@ class OskaMentors extends SimpleORMap
             return NULL;
         }
     }
-    
+
     public function getMentorStudycourses()
     {
         $studycourses = new SimpleCollection(UserStudyCourse::findByUser($this->user_id));
@@ -77,5 +77,30 @@ class OskaMentors extends SimpleORMap
         
         return $studycourse_data;
     }
-    
+
+    public function raiseCounter()
+    {
+        $this->mentee_counter += 1;
+    }
+
+    public function lowerCounter()
+    {
+        $this->mentee_counter -= 1;
+    }
+
+    public function countMentors()
+    {
+        return count(self::findBySQL('user_id != ""'));
+    }
+
+    public function getCounters()
+    {
+        $sql = "SELECT mentee_counter, COUNT(*) as count FROM oska_mentors GROUP BY mentee_counter ORDER BY mentee_counter ASC";
+
+        $statement = DBManager::get()->prepare($sql);
+        $statement->execute($parameters);
+        $counters = $statement->fetchAll();
+
+        return $counters;
+    }
 }

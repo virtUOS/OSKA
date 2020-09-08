@@ -24,6 +24,16 @@ class OskaMatches extends SimpleORMap
         parent::__construct($id);
     }
 
+    public function findAllMaches()
+    {
+        $matches = [];
+        foreach (self::findBySQL('mentor_id != ""', array()) as $match) {
+            array_push($matches, ['mentor' => User::find($match->mentor_id), 'mentee' => User::find($match->mentee_id)]);
+        }
+
+        return $matches;
+    }
+
     public function getMentees($mentor_id)
     {
         $mentees = [];
