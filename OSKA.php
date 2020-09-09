@@ -126,7 +126,7 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
                 if ($studycourse->semester > 1) {
                     $is_first_sem = false;
                 }
-                if ($studycourse->degree_name != "Bachelor") {
+                if (strpos($studycourse->degree_name, "Bachelor") < 0) {
                     $is_bachelor = false;
                 }
             }
