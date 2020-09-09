@@ -56,37 +56,26 @@ class MentoringController extends PluginController {
             $mentor->teacher = Request::option('lehramt');
             if (Request::option('lehramt') == '1') {
                 if(in_array(Request::option('lehramt_detail'), ['0', '1', '2'])) {
-                    $mentor->setMentorAbilities('lehramt_detail',  Request::option('lehramt_detail'));
+                    $teacher_detail = Request::option('lehramt_detail');
                 } else {
-                    $mentor->setMentorAbilities('lehramt_detail', '2');
+                    $teacher_detail = '2';
                 }
             } else {
-                $mentor->setMentorAbilities('lehramt_detail', '-1');
+                $teacher_detail = '-1';
             }
         } else {
             $mentor->teacher = 0;
-            $mentor->setMentorAbilities('lehramt_detail', '-1');
+            $teacher_detail = '-1';
         }
-        if(in_array(Request::option('firstgen'), ['0', '1', '2'])) {
-            $mentor->setMentorAbilities('firstgen',  Request::option('firstgen'));
-        } else {
-            $mentor->setMentorAbilities('firstgen', '2');
-        }
-        if(in_array(Request::option('children'), ['0', '1', '2'])) {
-            $mentor->setMentorAbilities('children',  Request::option('children'));
-        } else {
-            $mentor->setMentorAbilities('children', '2');
-        }
-        if(in_array(Request::option('apprentice'), ['0', '1', '2'])) {
-            $mentor->setMentorAbilities('apprentice',  Request::option('apprentice'));
-        } else {
-            $mentor->setMentorAbilities('apprentice', '2');
-        }
-        if(in_array(Request::option('migration'), ['0', '1', '2'])) {
-            $mentor->setMentorAbilities('migration',  Request::option('migration'));
-        } else {
-            $mentor->setMentorAbilities('migration', '2');
-        }
+
+        $abilities = [
+            'migration'       => Request::int('migration'),
+            'firstgen'     => Request::int('firstgen'),
+            'children'      => Request::int('children'),
+            'apprentice'    => Request::int('apprentice'),
+            'lehramt_detail'      => $teacher_detail
+        ];
+        $mentor->abilities = json_encode($abilities);
 
         $mentor->store();
         $this->redirect('mentoring/index');

@@ -14,7 +14,7 @@ class AddTables extends Migration
         $db->exec('CREATE TABLE IF NOT EXISTS `oska_mentors` (
           `user_id` VARCHAR(32) NOT NULL PRIMARY KEY,
           `teacher` BOOLEAN DEFAULT FALSE,
-          `abilities` JSON NOT NULL,
+          `abilities` TEXT NOT NULL,
           `mentee_counter` TINYINT(1) NOT NULL DEFAULT 0 ,
           `description` TEXT NOT NULL COLLATE utf8mb4_unicode_ci,
           `mkdate` DATETIME NOT NULL DEFAULT 0,
@@ -24,7 +24,7 @@ class AddTables extends Migration
         $db->exec('CREATE TABLE IF NOT EXISTS `oska_mentees` (
           `user_id` VARCHAR(32) NOT NULL PRIMARY KEY,
           `teacher` BOOLEAN NOT NULL DEFAULT FALSE,
-          `preferences` JSON NOT NULL,
+          `preferences` TEXT NOT NULL,
           `has_tutor` BOOLEAN NOT NULL DEFAULT FALSE ,
           `mkdate` DATETIME NOT NULL DEFAULT 0,
           `chdate` DATETIME ON UPDATE CURRENT_TIMESTAMP NOT NULL

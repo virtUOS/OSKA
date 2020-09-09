@@ -28,6 +28,7 @@ class OskaMentors extends SimpleORMap
 
     public function getProfile()
     {
+        $mentor = new \stdClass();
         $mentor->lehramt = $this->teacher;
         $mentor->lehramt_detail = $this->getMentorAbilities('lehramt_detail');
         $mentor->firstgen = $this->getMentorAbilities('firstgen');
@@ -49,14 +50,6 @@ class OskaMentors extends SimpleORMap
         }
     }
 
-    public function setMentorAbilities($type, $value)
-    {
-        $abilities = json_decode($this->abilities);
-        $abilities->$type = $value;
-
-        $this->abilities = json_encode($abilities);
-    }
-    
     public static function getMentorDescription($id = NULL)
     {
         if (self::find($id)) {

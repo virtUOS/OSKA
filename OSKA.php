@@ -45,7 +45,7 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
         // only tutors and lecturers have access to the OSKA administration
         $perm->check('tutor');
         
-        if ($perm->have_perm('dozent')) {
+        if ($perm->have_studip_perm('dozent', $course_id)) {
             $navigation = new Navigation($this->getPluginName(), PluginEngine::getURL('OSKA/admin/index'));
             $navigation->addSubNavigation('admin', new Navigation(_('Übersicht'), PluginEngine::getURL('OSKA/admin/index')));
             $navigation->addSubNavigation('matches', new Navigation(_('Matches'), PluginEngine::getURL('OSKA/admin/matches')));
@@ -126,7 +126,7 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
                 if ($studycourse->semester > 1) {
                     $is_first_sem = false;
                 }
-                if ($studycourse->degree_name != "Bachelor") {
+                if (strpos($studycourse->degree_name, "Bachelor") < 0) {
                     $is_bachelor = false;
                 }
             }
