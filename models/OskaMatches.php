@@ -40,6 +40,7 @@ class OskaMatches extends SimpleORMap
         foreach (self::findBySQL('mentor_id = ?', array($mentor_id)) as $match) {
             $user = User::find($match->mentee_id);
             $mentee = [];
+            $mentee['user_id'] = $user->user_id;
             $mentee['issue'] = $match->issue;
             $mentee['username'] = $user->username;
             $mentee['vorname'] = $user->vorname;

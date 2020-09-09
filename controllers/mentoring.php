@@ -102,6 +102,62 @@ class MentoringController extends PluginController {
         $this->mentor = $user;
         $this->subject = 'Nachricht von deinem OSKA';
         $this->mentees = OskaMatches::getMentees($user->id);
+
+        $sidebar = Sidebar::Get();
+
+
+        $actions = $sidebar->addWidget(new ActionsWidget());
+        if (!$this->has_studygroup()) {
+            $actions->addLink(
+                _('Studiengruppe anlegen'),
+                $this->url_for('mentoring/create_studygroup/'),
+                Icon::create('studygroup', 'clickable')
+            );
+        } else {
+            $actions->addLink(
+                _('zur Studiengruppe'),
+                URLHelper::getURL('dispatch.php/course/overview', ['cid' => $this->get_studygroup()]),
+                Icon::create('studygroup', 'clickable')
+            );
+        }
+    }
+
+    public function create_studygroup_action()
+    {
+        global $perm, $user;
+        $this->cid = Context::getId();
+
+        if(!$perm->have_studip_perm('tutor', $this->cid)) {
+            throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
+        }
+
+        $mentees = OskaMatches::getMentees($user->user_id);
+
+        $studygroup = new Seminar();
+        $studygroup->setId($studygroup->getNewId());
+        $studygroup->status = studygroup_sem_types()[0];
+        $studygroup->name = 'OSKA';
+        $studygroup->read_level  = 1;
+        $studygroup->write_level = 1;
+        $studygroup->institut_id = Config::Get()->STUDYGROUP_DEFAULT_INST;
+        $studygroup->visible = 1;
+        $current_semester = SemesterData::getSemesterDataByDate(time());
+        $studygroup->semester_start_time = $current_semester['beginn'];
+        $studygroup->duration_time = -1;
+        $studygroup->store();
+
+        $course_mentor = new CourseMember();
+        $course_mentor->user_id = $user->user_id;
+        $course_mentor->seminar_id = $studygroup->seminar_id;
+        $course_mentor->status = 'dozent';
+        $course_mentor->store();
+
+        foreach($mentees as $mentee){
+            StudygroupModel::inviteMember($mentee['user_id'] ,$studygroup->seminar_id);
+        }
+
+        $studygroup_url = URLHelper::getURL('dispatch.php/course/overview', ['cid' => $studygroup->seminar_id]);
+        $this->redirect($studygroup_url);
     }
 
     public function support_action()
@@ -122,5 +178,42 @@ class MentoringController extends PluginController {
         }
 
         $this->redirect('mentoring/mentee_list');
+    }
+
+    private function has_studygroup()
+    {
+        if ($this->get_studygroup() != null){
+            return true;
+        }
+        return false;
+    }
+
+    private function get_studygroup()
+    {
+        global $user;
+
+        $sql = "
+            SELECT 
+                seminare.Seminar_id 
+            FROM 
+                seminare 
+            JOIN 
+                seminar_user 
+            ON 
+                seminare.Seminar_id = seminar_user.Seminar_id 
+            WHERE 
+                seminare.status = " . studygroup_sem_types()[0] ."
+            AND 
+                seminar_user.user_id = '". $user->user_id ."' 
+            AND 
+                seminar_user.status = 'dozent'
+            AND 
+                seminare.Name = 'OSKA'
+            ";
+        $statement = DBManager::get()->prepare($sql);
+        $statement->execute();
+        $result = $statement->fetch();
+
+        return $result['Seminar_id'];
     }
 }
