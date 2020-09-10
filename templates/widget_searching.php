@@ -1,6 +1,9 @@
 <div id="oska-widget">
     <div class="oska-info">
-        <center><p class="oska-searching"><?= _('Vielen Dank für deine Angaben. 
-        Es wird nach einem OSKA für dich gesucht. Bitte warte einen Moment.') ?></p></center>
+        <center><p class="oska-searching">
+        <?= _('Es wird nach deinem*deiner OSKA gesucht. 
+            Sobald wir eine*n OSKA für dich gefunden haben, wirst du 
+            benachrichtigt/wird es dir angezeigt.') ?>
+        </p></center>
     </div>
 </div>

@@ -1,9 +1,9 @@
 <div id="oska-widget">
     <div class="oska-form">
-        <p><?= _('Herzlichen Willkommen auf der Anmeldeplattform zu deinem OSKA.
-        Um einen passenden OSKA für dich ausfindig zu machen, bitten wir dich 
+        <p><?= _('Herzlichen Willkommen auf der Anmeldeplattform zu deinem*deiner OSKA.
+        Um eine*n passenden OSKA für dich ausfindig zu machen, bitten wir dich 
         die folgenden Felder auszufüllen. Deine Angaben werden dazu verwendet, 
-        einen passenden OSKA für dich zu finden.') ?></p>
+        eine*n passenden OSKA für dich zu finden.') ?></p>
         
         <form class="default" action="<?= PluginEngine::getLink('OSKA/widget/add_mentee') ?>" 
             method="post" id="oska-add-mentee">
@@ -13,7 +13,7 @@
         
             <section class="col-5">
             <div>
-                <label class="label_text"><?= _('Welches Fach soll dein OSKA studieren?') ?><br>
+                <label class="label_text"><?= _('Welches Fach soll dein*e OSKA studieren?') ?><br>
                 <select name="studycourse" <?= count($studycourses) == 1 ? 'disabled' : '' ?>>
                 <? foreach($studycourses as $studycourse): ?>
                     <option value="<?= $studycourse->fach_id ?>" <?= count($studycourses) == 1 ? 'selected disabled' : '' ?>>
@@ -53,7 +53,7 @@
             </section>
             
             <section>
-                <span class="label-text"><?= _('Welches Geschlecht sollte dein OSKA haben?') ?></span>
+                <span class="label-text"><?= _('Welches Geschlecht sollte dein*e OSKA haben?') ?></span>
                 <div class="hgroup">
                     <label>
                         <input type="radio" name="gender" value="0" checked> <?= _('egal') ?> 
@@ -73,8 +73,8 @@
         
         <fieldset>
         <label>
-            <?= _('Bei meinem OSKA ist mir besonders wichtig: 
-            (Wenn dir einzelne Eigenschaften bei deinem OSKA wichtig sind, 
+            <?= _('Mir ist besonders wichtig, dass mein*e OSKA: 
+            (Wenn dir einzelne Eigenschaften bei deinem*deiner OSKA wichtig sind, 
             kannst du diese in die untenstehende Box ziehen.)') ?>
         </label>
         
@@ -84,19 +84,19 @@
 
             <div class="oska-pref-list oska-pref-container" data-group="0">
                 <div class="oska-pref-item">
-                    <?= _('... dass er/sie einen Migrationshintergrund hat') ?>
+                    <?= _('einen Migrationshintergrund hat') ?>
                 <input type="hidden" name="migration" value="0">
                 </div>
                 <div class="oska-pref-item">
-                    <?= _('... dass er/sie als Erste*r in seiner/ihrer Familie studiert') ?>
+                    <?= _('als Erste*r in seiner/ihrer Familie studiert') ?>
                     <input type="hidden" name="firstgen" value="0">
                 </div>
                 <div class="oska-pref-item">
-                    <?= _('... dass er/sie bereits Kinder hat') ?>
+                    <?= _('bereits (ein) Kind(er) hat') ?>
                     <input type="hidden" name="children" value="0">
                 </div>
                 <div class="oska-pref-item">
-                    <?= _('... dass er/sie vor dem Studium eine duale Ausbildung gemacht hat') ?>
+                    <?= _('eine (duale) Ausbildung abgeschlossen hat') ?>
                     <input type="hidden" name="apprentice" value="0">
                 </div>
             </div>
