@@ -133,6 +133,7 @@ class AdminController extends PluginController {
         $this->mentors = [];
 
         foreach($oska_mentors as $oska_mentor) {
+            $mentor = new \stdClass();
             $mentor->user = User::find($oska_mentor->user_id);
             $mentor->studycourses = '';
             $len = count($mentor->user->studycourses);
@@ -161,7 +162,6 @@ class AdminController extends PluginController {
 
         shuffle($this->mentors);
         $this->mentors = array_slice($this->mentors, 0, 20);
-
     }
 
     public function store_match_action()

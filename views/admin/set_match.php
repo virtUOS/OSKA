@@ -92,10 +92,10 @@
             </tr>
         </thead>
         <tbody>
-            <? foreach($mentors as $mentor): ?>
+            <? foreach($mentors as $key => $mentor): ?>
                 <tr>
                     <td>
-                        <input type="radio" name="mentor_id" value="<?= $mentor->user->user_id ?>" />
+                        <input type="radio" name="mentor_id" value="<?= $mentor->user->user_id ?>" <? if($key == 0):?> checked="checked" <? endif?>/>
                     </td>
                     <td>
                         <?= htmlReady($mentor->user->vorname) . ' ' . htmlReady($mentor->user->nachname);?>

@@ -55,7 +55,7 @@ class OskaMentees extends SimpleORMap
     {
         $this->has_tutor = $val;
     }
-    
+
     /**
     * Returns the int value of the given preference if it is a valid number.
     *
@@ -75,7 +75,7 @@ class OskaMentees extends SimpleORMap
             return NULL;
         }
     } 
-    
+
     /**
     * Returns the studycourse id of the preferred studycourse.
     */
@@ -85,7 +85,7 @@ class OskaMentees extends SimpleORMap
         
         return $preferences->studycourse;
     }
-    
+
     /**
     * Returns the gender value preferred by the mentee if it is a valid number.
     */
@@ -106,7 +106,18 @@ class OskaMentees extends SimpleORMap
 
     public function findAllMentees($lower_bound = 1, $elements_per_page = null, $fach_id = null)
     {
-        $sql = "SELECT * FROM oska_mentees JOIN user_studiengang ON oska_mentees.user_id = user_studiengang.user_id";
+        $sql = "
+            SELECT 
+                *
+            FROM
+                oska_mentees
+            JOIN
+                user_studiengang
+            ON
+                oska_mentees.user_id = user_studiengang.user_id
+            GROUP BY
+                oska_mentees.user_id
+            ";
         if($fach_id != null) {
             $sql .= " WHERE fach_id = '" . $fach_id . "'";
         }
