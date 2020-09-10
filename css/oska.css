@@ -14,6 +14,17 @@
     padding-right: 2%;
 }
 
+.oska-img {
+    width: 420px;
+}
+
+@media only screen and (max-width: 480px) {
+    .oska-img {
+        width: 100%;
+    }
+}
+
+
 .oska-form-prefs {
     display: flex;
     flex-wrap: wrap;
@@ -63,15 +74,10 @@
 }
 
 .oska-searching {
-    font-size: large;
+    font-size: 1.25em;
     color: #28497c;
-}
-
-.oska-searching:before {
-    content:url('../../../../assets/images/icons/blue/search.svg');
-    height:16px;
-    margin:1px 5px 0 -8px;
-    width:16px;
+    margin: 1em 0;
+    max-width: 32em;
 }
 
 .oska-found {
@@ -85,6 +91,14 @@
 
 .oska-avatar {
     margin-left: 3em;
+}
+
+.oska-widget-footer {
+    overflow: hidden;
+}
+
+.oska-widget-footer img {
+    float: right;
 }
 
 
