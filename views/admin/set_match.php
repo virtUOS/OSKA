@@ -126,7 +126,7 @@
         </tbody>
 </table>
 <footer data-dialog-button>
-    <button class="button accept">speichern</button>
+    <button class="button accept"><?= _('speichern') ?></button>
 </footer>
 </form>
 

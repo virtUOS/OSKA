@@ -19,10 +19,10 @@
     </colgroup>
         <thead>
             <tr>
-                <th>Nachname, Vorname</th>
-                <th>Fach</th>
-                <th style="text-align: center">OSKA</th>
-                <th style="text-align: right">Aktionen</th>
+                <th><?= _('Nachname, Vorname') ?></th>
+                <th><?= _('Fach') ?></th>
+                <th style="text-align: center"><?= _('OSKA') ?></th>
+                <th style="text-align: right"><?= _('Aktionen') ?></th>
             </tr>
         </thead>
         <tbody>

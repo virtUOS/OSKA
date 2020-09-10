@@ -8,9 +8,9 @@
     </colgroup>
         <thead>
             <tr>
-                <th data-sort="text">Mentor (Nachname, Vorname)</th>
-                <th data-sort="text">Mentee (Nachname, Vorname)</th>
-                <th style="text-align: right">Aktionen</th>
+                <th data-sort="text"><?= _('Mentor (Nachname, Vorname)') ?></th>
+                <th data-sort="text"><?= _('Mentee (Nachname, Vorname)') ?></th>
+                <th style="text-align: right"><?= _('Aktionen') ?></th>
             </tr>
         </thead>
         <? foreach ($matches as $match): ?>

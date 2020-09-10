@@ -89,7 +89,7 @@ class MentoringController extends PluginController {
         Navigation::activateItem('/course/oska/mentee_list');
 
         $this->mentor = $user;
-        $this->subject = 'Nachricht von deinem OSKA';
+        $this->subject = _('Nachricht von deinem OSKA');
         $this->mentees = OskaMatches::getMentees($user->id);
 
         $sidebar = Sidebar::Get();

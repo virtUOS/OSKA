@@ -150,7 +150,7 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
             }
         }
         
-        $template->title = _('Mein OSKA');
+        $template->title = _('OSKA – Mein*e Mentor*in am Studienanfang');
         $template->oska_image_url = $this->getPluginURL() . '/images/OSKA.jpg';
 
         return $template;

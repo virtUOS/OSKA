@@ -29,7 +29,7 @@
             <div 
                 class="oska-pie__segment"
                 style="--offset: <?= $offset ?>; --value: <?= $value ?>; --bg: <?= $pie_bg_colors[$key]?>; <? if($value > 50):?>--over50: 1;<? endif;?>" 
-                title="<?= htmlReady($counter['count'])._(' OSKA mit ') . htmlReady($counter['mentee_counter']) .' Mentee (' . htmlReady($value) . '%)'?>">
+                title="<?= htmlReady($counter['count'])._(' OSKA mit ') . htmlReady($counter['mentee_counter']) . _(' Mentee') . '(' . htmlReady($value) . '%)'?>">
                     <label class="oska-pie__label"><?= _('mit ') . htmlReady($counter['mentee_counter']) .  _(' Mentee') ?></label>
                 </div>
                 <? $offset = $offset + $value; ?>
@@ -48,9 +48,9 @@
     </colgroup>
         <thead>
             <tr>
-                <th data-sort="text">Mentor (Nachname, Vorname)</th>
-                <th data-sort="text">Mentee (Nachname, Vorname)</th>
-                <th style="text-align: right">Aktionen</th>
+                <th data-sort="text"><?= _('Mentor (Nachname, Vorname)') ?></th>
+                <th data-sort="text"><?= _('Mentee (Nachname, Vorname)') ?></th>
+                <th style="text-align: right"><?= _('Aktionen') ?></th>
             </tr>
         </thead>
     <? foreach ($issues as $issue): ?>

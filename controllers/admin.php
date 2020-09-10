@@ -188,7 +188,7 @@ class AdminController extends PluginController {
         $this->mentees = [];
 
         $f = fopen('php://output', 'w');
-        $csv_header = array('Vorname', 'Nachname', 'Studiengang', 'OSKA');
+        $csv_header = array(_('Vorname'), _('Nachname'), _('Studiengang'), 'OSKA');
         fputcsv($f, $csv_header, ',');
 
         foreach(OskaMentees::findAllMentees() as $mentee){
