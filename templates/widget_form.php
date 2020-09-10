@@ -14,13 +14,18 @@
             <section class="col-5">
             <div>
                 <label class="label_text"><?= _('Welches Fach soll dein*e OSKA studieren?') ?><br>
-                <select name="studycourse" <?= count($studycourses) == 1 ? 'disabled' : '' ?>>
-                <? foreach($studycourses as $studycourse): ?>
-                    <option value="<?= $studycourse->fach_id ?>" <?= count($studycourses) == 1 ? 'selected disabled' : '' ?>>
-                        <?= htmlReady(_($studycourse->studycourse_name)) ?>
-                    </option>
-                <? endforeach ?>
-                </select>
+                <? if (count($studycourses) > 1): ?>
+                    <select name="studycourse">
+                        <? foreach($studycourses as $studycourse): ?>
+                            <option value="<?= $studycourse->fach_id ?>">
+                                <?= htmlReady(_($studycourse->studycourse_name)) ?>
+                            </option>
+                        <? endforeach ?>
+                    </select>
+                <? else: ?>
+                <input type="hidden" name="studycourse" value="<?= $studycourses[0]->fach_id ?>" />
+                <input type="text" name="studycoursename" value="<?= $studycourses[0]->studycourse_name ?>" disabled />
+                <? endif?>
                 </label>
             </div>
             </section>
