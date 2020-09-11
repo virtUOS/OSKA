@@ -100,16 +100,16 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
 
                 // Fachbereiche / Institutes
                 $study_institutes = [];
-                if ($user->perms !== 'dozent') {
-                    if (count($user->institute_memberships) > 0 
-                            && Visibility::verify('studying', $mentor)) {
-                            
-                        $study_institutes = $user->institute_memberships->filter(function ($a) {
-                            return $a->inst_perms === 'user';
-                        });
-                        $template->study_institutes = $study_institutes;
-                    }
+
+                if (count($user->institute_memberships) > 0 
+                        && Visibility::verify('studying', $mentor)) {
+                        
+                    $study_institutes = $user->institute_memberships->filter(function ($a) {
+                        return $a->inst_perms === 'user';
+                    });
                 }
+            
+                $template->study_institutes = $study_institutes;
 
             } else {
                 $template = $template_factory->open('widget_searching');
