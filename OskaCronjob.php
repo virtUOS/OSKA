@@ -102,8 +102,8 @@ class OskaCronjob extends CronJob
                         
                         // calculate number of matching preferences/abilities
                         foreach ($abilities as $ability => $value) {
-                            if ($value == $preferences->$ability && $preferences->$ability > 0 ||
-                                    $ability == 'lehramt_detail' && $preferences->$ability >= 0) {
+                            if ($value == $preferences->$ability && ($preferences->$ability > 0 ||
+                                    $ability == 'lehramt_detail' && $preferences->$ability >= 0)) {
                                 $mentor_prefsums[$mentor->user_id]++;
                             }
                         }
