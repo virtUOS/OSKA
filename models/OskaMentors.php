@@ -35,6 +35,7 @@ class OskaMentors extends SimpleORMap
         $mentor->children = $this->getMentorAbilities('children');
         $mentor->apprentice = $this->getMentorAbilities('apprentice');
         $mentor->migration = $this->getMentorAbilities('migration');
+        $mentor->description = $this->description;
 
         return $mentor;
     }

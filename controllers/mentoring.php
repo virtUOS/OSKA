@@ -28,6 +28,7 @@ class MentoringController extends PluginController {
             $this->mentor->children = 2;
             $this->mentor->apprentice = 2;
             $this->mentor->migration = 2;
+            $this->mentor->description = '';
             $this->default_data = true;
         } else {
             $this->mentor = $mentor->getProfile();
@@ -76,6 +77,8 @@ class MentoringController extends PluginController {
             'lehramt_detail'      => $teacher_detail
         ];
         $mentor->abilities = json_encode($abilities);
+
+        $mentor->description = \Studip\Markup::purifyHtml(Request::get('description'));
 
         $mentor->store();
         $this->redirect('mentoring/index');

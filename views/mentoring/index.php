@@ -136,6 +136,11 @@
                 <?= _('keine Angabe')?>
             </label>
         </section>
+
+        <section>
+            <span class="label-text"><?= _('Beschreibe dich für deine/deinen Mentee kurz:') ?></span>
+            <textarea name="description"><?= htmlReady($mentor->description) ?></textarea>
+        </section>
     </fieldset>
     <footer>
     <? if ($default_data) : ?>

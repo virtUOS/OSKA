@@ -95,7 +95,7 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
 
                 // mentor data
                 $user = User::find($mentor);
-                $template->mentor_name = $user->username;
+                $template->mentor_name = $user->vorname . ' ' .$user->nachname;
                 $template->mentor_desc = OskaMentors::getMentorDescription($mentor);
 
                 // Fachbereiche / Institutes
