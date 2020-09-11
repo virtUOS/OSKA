@@ -2,11 +2,16 @@
     <div id="oska-widget">
         <div class="oska-info">
             <img src="<?= $oska_image_url ?>" class="oska-float oska-img">
-            <p><?= _('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam 
-            nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam 
-            erat, sed diam voluptua. At vero eos et accusam et justo duo dolores 
-            et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est 
-            Lorem ipsum dolor sit amet.') ?></p>
+            <p><?= _('Für dich können wir leider keine*n OSKA-Mentor*in bereit stellen,
+            da du dich bereits in einem höheren Semester befindest. Das OSKA-Mentoring richtet 
+            sich gezielt an Studienanfänger*innen im Bachelor oder Staatsexamen im ersten Semester.
+            Solltest du Unterstützung in deinem Studium benötigen, erkundige dich doch einmal in 
+            deinem Fach nach einer Fachstudienberatung. Es gibt zudem zahlreiche Workshopangebote, 
+            die bei vielen Fragen rund ums Studium weiterhelfen können.') ?>
+                <a href="https://www.uni-osnabrueck.de/studium/im-studium/studieren-plus/" target="_blank">
+                    &rarr; <?= _('Studieren PLuS')?>
+                </a>
+            </p>
         </div>
     </div>
     <footer class="oska-widget-footer">
