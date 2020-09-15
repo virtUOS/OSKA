@@ -4,11 +4,7 @@ class MentoringController extends PluginController {
 
     function before_filter(&$action, &$args)
     {
-        global $perm;
-
         parent::before_filter($action, $args);
-
-        $perm->check('tutor');
     }
 
     public function index_action()
@@ -41,7 +37,7 @@ class MentoringController extends PluginController {
         global $perm, $user;
         $this->cid = Context::getId();
 
-        if(!$perm->have_studip_perm('tutor', $this->cid)) {
+        if(!$perm->have_studip_perm('autor', $this->cid)) {
             throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
         }
 
@@ -119,7 +115,7 @@ class MentoringController extends PluginController {
         global $perm, $user;
         $this->cid = Context::getId();
 
-        if(!$perm->have_studip_perm('tutor', $this->cid)) {
+        if(!$perm->have_studip_perm('autor', $this->cid)) {
             throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
         }
 
@@ -157,7 +153,7 @@ class MentoringController extends PluginController {
         global $perm;
         $this->cid = Context::getId();
 
-        if(!$perm->have_studip_perm('tutor', $this->cid)) {
+        if(!$perm->have_studip_perm('autor', $this->cid)) {
             throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
         }
 

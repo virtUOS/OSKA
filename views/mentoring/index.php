@@ -137,7 +137,7 @@
             </label>
         </section>
 
-        <section>
+        <section class="col-2">
             <span class="label-text"><?= _('Beschreibe dich für deine/deinen Mentee kurz:') ?></span>
             <textarea name="description"><?= htmlReady($mentor->description) ?></textarea>
         </section>

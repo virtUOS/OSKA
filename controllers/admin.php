@@ -8,7 +8,7 @@ class AdminController extends PluginController {
 
         parent::before_filter($action, $args);
 
-        $perm->check('dozent');
+        $perm->check('tutor');
 
         Navigation::activateItem('/course/oska');
     }
@@ -37,6 +37,13 @@ class AdminController extends PluginController {
 
     public function matches_action()
     {
+        global $perm;
+        $this->cid = Context::getId();
+
+        if(!$perm->have_studip_perm('tutor', $this->cid)) {
+            throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
+        }
+
         $this->title = _('Matches');
         Navigation::activateItem('/course/oska/matches');
 
@@ -45,6 +52,13 @@ class AdminController extends PluginController {
 
     public function mentees_action($page = 1, $fach_selection = null)
     {
+        global $perm;
+        $this->cid = Context::getId();
+
+        if(!$perm->have_studip_perm('tutor', $this->cid)) {
+            throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
+        }
+
         Navigation::activateItem('/course/oska/mentees');
         $this->title            = _('Mentees');
         $this->page             = (int) $page;
@@ -114,6 +128,13 @@ class AdminController extends PluginController {
 
     public function set_match_action()
     {
+        global $perm;
+        $this->cid = Context::getId();
+
+        if(!$perm->have_studip_perm('tutor', $this->cid)) {
+            throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
+        }
+
         $user_id = Request::get('mentee_id');
         $this->mentee = OskaMentees::find($user_id);
         $this->mentee_user = User::find($user_id);
@@ -166,6 +187,13 @@ class AdminController extends PluginController {
 
     public function store_match_action()
     {
+        global $perm;
+        $this->cid = Context::getId();
+
+        if(!$perm->have_studip_perm('tutor', $this->cid)) {
+            throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
+        }
+
         $mentee = OskaMentees::find(Request::get('mentee_id'));
         $mentor = OskaMentors::find(Request::get('mentor_id'));
 
@@ -185,6 +213,13 @@ class AdminController extends PluginController {
 
     public function export_mentees_action()
     {
+        global $perm;
+        $this->cid = Context::getId();
+
+        if(!$perm->have_studip_perm('tutor', $this->cid)) {
+            throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
+        }
+
         $this->mentees = [];
 
         $f = fopen('php://output', 'w');
@@ -220,7 +255,7 @@ class AdminController extends PluginController {
         global $perm;
         $this->cid = Context::getId();
 
-        if(!$perm->have_studip_perm('dozent', $this->cid)) {
+        if(!$perm->have_studip_perm('tutor', $this->cid)) {
             throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
         }
 
@@ -238,7 +273,7 @@ class AdminController extends PluginController {
         global $perm;
         $this->cid = Context::getId();
 
-        if(!$perm->have_studip_perm('dozent', $this->cid)) {
+        if(!$perm->have_studip_perm('tutor', $this->cid)) {
             throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
         }
 
