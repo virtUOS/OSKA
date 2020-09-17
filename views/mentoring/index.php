@@ -35,6 +35,30 @@
         <label class="col-4">
         </label>
 
+        <section class="col-4">
+            <span class="label-text"><?= _('Studiengang, in dem du als OSKA-Mentor*in tätig bist') ?></span>
+            <div class="hgroup">
+                <label>
+                    <? if (count($studycourses) > 1): ?>
+                        <select name="studycourse">
+                            <? foreach($studycourses as $studycourse): ?>
+                                <option value="<?= $studycourse->fach_id ?>" 
+                                    <?= $mentor->studycourse == $studycourse->fach_id ? 'selected' : '' ?>>
+                                    <?= htmlReady(_($studycourse->studycourse_name)) ?>
+                                </option>
+                            <? endforeach ?>
+                        </select>
+                    <? else: ?>
+                    <input type="hidden" name="studycourse" value="<?= $studycourses[0]->fach_id ?>" />
+                    <input type="text" name="studycoursename" value="<?= $studycourses[0]->studycourse_name ?>" disabled />
+                    <? endif?>
+                </label>
+            </div>
+        </section>
+        
+        <label class="col-1">
+        </label>
+
         <section class="col-2">
             <span class="label-text"><?= _('Studierst du mit dem Ziel Lehramt?') ?></span>
             <div class="hgroup">
@@ -68,7 +92,7 @@
         </section>
 
         <section>
-            <span class="label-text"><?= _('Haben deine Eltern studiert oder bist du der/die erste in deiner Familie, der/die studiert?') ?></span>
+            <span class="label-text"><?= _('Bist du der/die erste in deiner Familie, der/die studiert?') ?></span>
             <div class="hgroup">
                 <label>
                     <input name="firstgen" type="radio" value="1" <? if ($mentor->firstgen == 1) echo 'checked'; ?>>

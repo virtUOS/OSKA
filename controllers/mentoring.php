@@ -17,6 +17,7 @@ class MentoringController extends PluginController {
         $this->gender = $user->geschlecht;
 
         $mentor = OskaMentors::find($user->user_id);
+        $this->studycourses = new SimpleCollection(UserStudyCourse::findByUser($user->user_id));
 
         if($mentor == null) {
             $this->mentor->lehramt = 0;
@@ -30,6 +31,7 @@ class MentoringController extends PluginController {
             $this->mentor = $mentor->getProfile();
             $this->default_data = false;
         }
+
     }
 
     public function store_profile_action()
@@ -70,7 +72,8 @@ class MentoringController extends PluginController {
             'firstgen'     => Request::int('firstgen'),
             'children'      => Request::int('children'),
             'apprentice'    => Request::int('apprentice'),
-            'lehramt_detail'      => $teacher_detail
+            'lehramt_detail'      => $teacher_detail,
+            'studycourse'   => Request::option('studycourse')
         ];
         $mentor->abilities = json_encode($abilities);
 

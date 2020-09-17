@@ -114,13 +114,13 @@ class OskaMentees extends SimpleORMap
             JOIN
                 user_studiengang
             ON
-                oska_mentees.user_id = user_studiengang.user_id
-            GROUP BY
-                oska_mentees.user_id
-            ";
+                oska_mentees.user_id = user_studiengang.user_id";
         if($fach_id != null) {
             $sql .= " WHERE fach_id = '" . $fach_id . "'";
         }
+        
+        $sql .= " GROUP BY oska_mentees.user_id";
+        
         if($elements_per_page != null){
             $sql .= " LIMIT ". $lower_bound. ', '. $elements_per_page;
         }

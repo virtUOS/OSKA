@@ -118,12 +118,88 @@ class AdminController extends PluginController {
             ['data-dialog' => '']
             );  
     }
+    
+    public function mentors_action($page = 1, $fach_selection = null)
+    {
+        global $perm;
+        $this->cid = Context::getId();
+
+        if(!$perm->have_studip_perm('tutor', $this->cid)) {
+            throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
+        }
+
+        Navigation::activateItem('/course/oska/mentors');
+        $this->title            = _('Mentoren');
+        $this->page             = (int) $page;
+        $this->user             = $GLOBALS['user'];
+        $this->entries_per_page = Config::get()->ENTRIES_PER_PAGE;
+        $this->mentors          = [];
+        $this->mentors_usernames = [];
+        $this->mentors_counter  = OskaMentors::countMentorsWithFilter($fach_selection);
+        $this->fächer           = $this->getFächer('mentors');
+        $this->fach_filter      = $fach_selection;
+
+        $oska_mentors = OskaMentors::findAllMentors(
+            ($this->page - 1) * $this->entries_per_page, // lower bound
+            $this->entries_per_page, // elements per page
+            $fach_selection //fach filter
+        );
+
+        foreach($oska_mentors as $mentor){
+            $user = User::find($mentor['user_id']);
+            $fach = '';
+            $len = count($user->studycourses);
+            foreach ($user->studycourses as $index => $val) {
+                $fach .= $val->studycourse->name;
+                if ($index != $len -1) {
+                    $fach .= ', ';        if($elements_per_page != null){
+                        $sql .= " LIMIT ". $lower_bound. ', '. $elements_per_page;
+                    }
+                }
+            }
+            array_push($this->mentors_usernames, $user->username);
+            array_push($this->mentors, array(
+                'user' => $user, 
+                'abilities' => json_decode($mentor['abilities']), 
+                'mentee_counter' => intval($mentor['mentee_counter']),
+                'fach' => $fach
+                )
+            );
+        }
+        $sidebar = Sidebar::Get();
+
+        $actions = $sidebar->addWidget(new ActionsWidget());
+        $actions->addLink(
+            _('Mentor-Liste exportieren'),
+            $this->url_for('admin/export_mentors/'),
+            Icon::create('export', 'clickable')
+        );
+        $actions->addLink(
+            _('Nachricht an Mentoren schreiben'),
+            URLHelper::getURL('dispatch.php/messages/write', [
+                'filter'          => 'send_sms_to_all',
+                'emailrequest'    => 1,
+                'rec_uname'       => $this->mentors_usernames,
+                'default_subject' => _(''),
+            ]),
+            
+            Icon::create('mail', 'clickable'),
+            ['data-dialog' => '']
+            );  
+    }
 
     public function fach_filter_action()
     {
         $fach_id = Request::get('fach_filter');
 
         $this->redirect('admin/mentees/1/'.$fach_id);
+    }
+    
+    public function fach_filter_mentor_action()
+    {
+        $fach_id = Request::get('fach_filter');
+
+        $this->redirect('admin/mentors/1/'.$fach_id);
     }
 
     public function set_match_action()
@@ -249,6 +325,45 @@ class AdminController extends PluginController {
         fpassthru($f);
         exit();
     }
+    
+    public function export_mentors_action()
+    {
+        global $perm;
+        $this->cid = Context::getId();
+
+        if(!$perm->have_studip_perm('tutor', $this->cid)) {
+            throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
+        }
+
+        $this->mentors = [];
+
+        $f = fopen('php://output', 'w');
+        $csv_header = array(_('Vorname'), _('Nachname'), _('Studiengang'), _('Anzahl Mentees'));
+        fputcsv($f, $csv_header, ',');
+
+        foreach(OskaMentors::findAllMentors() as $mentor){
+            $user = User::find($mentor['user_id']);
+            $fach = '';
+            $len = count($user->studycourses);
+            foreach ($user->studycourses as $index => $val) {
+                $fach .= $val->studycourse->name;
+                if ($index != $len -1) {
+                    $fach .= ', ';        if($elements_per_page != null){
+                        $sql .= " LIMIT ". $lower_bound. ', '. $elements_per_page;
+                    }
+                }
+            }
+            $line = array($user->vorname, $user->nachname, $fach, intval($mentor['mentee_counter']));
+            fputcsv($f, $line, ',');
+        }
+
+        $filename = 'Mentors';
+
+        header('Content-Type: application/csv');
+        header('Content-Disposition: attachment; filename="'.$filename.'.csv";');
+        fpassthru($f);
+        exit();
+    }
 
     public function remove_issue_action()
     {
@@ -296,9 +411,20 @@ class AdminController extends PluginController {
         $this->redirect('admin');
     }
 
-    private function getFächer()
+    private function getFächer($role = NULL)
     {
-        $sql = "SELECT fach.fach_id, fach.name FROM oska_mentees JOIN user_studiengang on oska_mentees.user_id = user_studiengang.user_id JOIN fach on user_studiengang.fach_id = fach.fach_id join abschluss on user_studiengang.abschluss_id = abschluss.abschluss_id WHERE abschluss.name LIKE '%bachelor%'";
+             
+        if ($role == 'mentors') {
+            $role_table = 'oska_mentors';
+        } else {
+            $role_table = 'oska_mentees';
+        }
+    
+        $sql = "SELECT DISTINCT fach.fach_id, fach.name FROM $role_table JOIN user_studiengang " . 
+               "on $role_table.user_id = user_studiengang.user_id JOIN fach " . 
+               "on user_studiengang.fach_id = fach.fach_id join abschluss " . 
+               "on user_studiengang.abschluss_id = abschluss.abschluss_id " .
+               "WHERE abschluss.name LIKE '%bachelor%'";
 
         $statement = DBManager::get()->prepare($sql);
         $statement->execute($parameters);

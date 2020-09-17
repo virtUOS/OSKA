@@ -30,6 +30,7 @@ class OskaMentors extends SimpleORMap
     {
         $mentor = new \stdClass();
         $mentor->lehramt = $this->teacher;
+        $mentor->studycourse = $this->getMentorPrefStudycourse();
         $mentor->lehramt_detail = $this->getMentorAbilities('lehramt_detail');
         $mentor->firstgen = $this->getMentorAbilities('firstgen');
         $mentor->children = $this->getMentorAbilities('children');
@@ -58,6 +59,13 @@ class OskaMentors extends SimpleORMap
         } else {
             return NULL;
         }
+    }
+
+    public function getMentorPrefStudycourse()
+    {
+        $abilities = json_decode($this->abilities);
+        
+        return $abilities->studycourse;
     }
 
     public function getMentorStudycourses()
@@ -97,4 +105,38 @@ class OskaMentors extends SimpleORMap
 
         return $counters;
     }
+    
+    public function countMentorsWithFilter($fach_selection)
+    {
+        return count(self::findAllMentors(1, null, $fach_selection));
+    }
+    
+    public function findAllMentors($lower_bound = 1, $elements_per_page = null, $fach_id = null)
+    {
+        $sql = "
+            SELECT 
+                *
+            FROM
+                oska_mentors
+            JOIN
+                user_studiengang
+            ON
+                oska_mentors.user_id = user_studiengang.user_id";
+        if($fach_id != null) {
+            $sql .= " WHERE fach_id = '" . $fach_id . "'";
+        }
+        
+        $sql .= " GROUP BY oska_mentors.user_id";
+        
+        if($elements_per_page != null){
+            $sql .= " LIMIT ". $lower_bound. ', '. $elements_per_page;
+        }
+
+        $statement = DBManager::get()->prepare($sql);
+        $statement->execute($parameters);
+        $mentors = $statement->fetchAll();
+
+        return $mentors;
+    }
+    
 }
