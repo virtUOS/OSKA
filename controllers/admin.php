@@ -119,7 +119,7 @@ class AdminController extends PluginController {
             );  
     }
     
-    public function mentors_action($page = 1, $fach_selection = null)
+    public function mentors_action($page = 1, $fach_selection = null, $mentee_count = null)
     {
         global $perm;
         $this->cid = Context::getId();
@@ -128,6 +128,9 @@ class AdminController extends PluginController {
             throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
         }
 
+        $fach_selection = $fach_selection != 0 ? $fach_selection : null;
+        $mentee_count = $mentee_count != null ? intval($mentee_count) : null;
+        
         Navigation::activateItem('/course/oska/mentors');
         $this->title            = _('Mentoren');
         $this->page             = (int) $page;
@@ -135,15 +138,26 @@ class AdminController extends PluginController {
         $this->entries_per_page = Config::get()->ENTRIES_PER_PAGE;
         $this->mentors          = [];
         $this->mentors_usernames = [];
-        $this->mentors_counter  = OskaMentors::countMentorsWithFilter($fach_selection);
+        $this->mentors_counter  = OskaMentors::countMentorsWithFilter($fach_selection, $mentee_count);
         $this->fächer           = $this->getFächer('mentors');
         $this->fach_filter      = $fach_selection;
+        $this->mentee_count     = $mentee_count;
 
         $oska_mentors = OskaMentors::findAllMentors(
             ($this->page - 1) * $this->entries_per_page, // lower bound
             $this->entries_per_page, // elements per page
             $fach_selection //fach filter
         );
+        
+
+        
+        if (isset($this->mentee_count)) {
+            $oska_mentors = array_filter(
+                $oska_mentors, function($mentor) {
+                    return intval($mentor['mentee_counter']) == $this->mentee_count;
+                }
+            );
+        }
 
         foreach($oska_mentors as $mentor){
             $user = User::find($mentor['user_id']);
@@ -171,7 +185,7 @@ class AdminController extends PluginController {
         $actions = $sidebar->addWidget(new ActionsWidget());
         $actions->addLink(
             _('Mentor-Liste exportieren'),
-            $this->url_for('admin/export_mentors/'),
+            $this->url_for('admin/export_mentors/'.($fach_selection != null ? $fach_selection : 0).'/'.$mentee_count),
             Icon::create('export', 'clickable')
         );
         $actions->addLink(
@@ -197,9 +211,10 @@ class AdminController extends PluginController {
     
     public function fach_filter_mentor_action()
     {
-        $fach_id = Request::get('fach_filter');
+        $fach_id = Request::get('fach_filter') ?: 0;
+        $mentee_count_filter = Request::get('mentee_count_filter') !== '' ? Request::int('mentee_count_filter') : null;
 
-        $this->redirect('admin/mentors/1/'.$fach_id);
+        $this->redirect('admin/mentors/1/'.$fach_id.'/'.$mentee_count_filter);
     }
 
     public function set_match_action()
@@ -326,8 +341,9 @@ class AdminController extends PluginController {
         exit();
     }
     
-    public function export_mentors_action()
+    public function export_mentors_action($fach_selection = null, $mentee_count = null)
     {
+    
         global $perm;
         $this->cid = Context::getId();
 
@@ -342,19 +358,26 @@ class AdminController extends PluginController {
         fputcsv($f, $csv_header, ',');
 
         foreach(OskaMentors::findAllMentors() as $mentor){
-            $user = User::find($mentor['user_id']);
-            $fach = '';
-            $len = count($user->studycourses);
-            foreach ($user->studycourses as $index => $val) {
-                $fach .= $val->studycourse->name;
-                if ($index != $len -1) {
-                    $fach .= ', ';        if($elements_per_page != null){
-                        $sql .= " LIMIT ". $lower_bound. ', '. $elements_per_page;
+            if ($mentee_count == '' || $mentor['mentee_counter'] == $mentee_count) {
+                $user = User::find($mentor['user_id']);
+                $fach = '';
+                $len = count($user->studycourses);
+                foreach ($user->studycourses as $index => $val) {
+                    if (!$fach_selection || $val->studycourse->id == $fach_selection) {
+                        $fach_chosen = true;
+                    }
+                    $fach .= $val->studycourse->name;
+                    if ($index != $len -1) {
+                        $fach .= ', ';        if($elements_per_page != null){
+                            $sql .= " LIMIT ". $lower_bound. ', '. $elements_per_page;
+                        }
                     }
                 }
+                if ($fach_chosen) {
+                    $line = array($user->vorname, $user->nachname, $fach, intval($mentor['mentee_counter']));
+                    fputcsv($f, $line, ',');
+                }
             }
-            $line = array($user->vorname, $user->nachname, $fach, intval($mentor['mentee_counter']));
-            fputcsv($f, $line, ',');
         }
 
         $filename = 'Mentors';

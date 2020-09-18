@@ -106,12 +106,12 @@ class OskaMentors extends SimpleORMap
         return $counters;
     }
     
-    public function countMentorsWithFilter($fach_selection)
+    public function countMentorsWithFilter($fach_selection, $mentee_counter)
     {
-        return count(self::findAllMentors(1, null, $fach_selection));
+        return count(self::findAllMentors(1, null, $fach_selection, $mentee_counter));
     }
     
-    public function findAllMentors($lower_bound = 1, $elements_per_page = null, $fach_id = null)
+    public function findAllMentors($lower_bound = 1, $elements_per_page = null, $fach_id = null, $mentee_counter = null)
     {
         $sql = "
             SELECT 
@@ -124,6 +124,11 @@ class OskaMentors extends SimpleORMap
                 oska_mentors.user_id = user_studiengang.user_id";
         if($fach_id != null) {
             $sql .= " WHERE fach_id = '" . $fach_id . "'";
+        }
+        
+        if ($mentee_counter != null) {
+            $sql .= $fach_id != null ? " AND" : " WHERE";
+            $sql .= " mentee_counter = $mentee_counter";
         }
         
         $sql .= " GROUP BY oska_mentors.user_id";

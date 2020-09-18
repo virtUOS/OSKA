@@ -1,12 +1,26 @@
 <h1><?= _('Mentoren') ?> (<?= $mentors_counter?>)</h1>
 
 <form action="<?= $controller->link_for('admin/fach_filter_mentor');?>" class="default" method="post">
-    <select name="fach_filter">
-    <option value="" <? if($fach_filter == null) {echo 'selected';}?>><?=_('kein Filter') ?></option>
-    <? foreach ($fächer as $fach): ?>
-    <option value="<?= $fach['fach_id'] ?>" <? if($fach_filter == $fach['fach_id']) {echo 'selected';}?>><?= htmlReady($fach['name']); ?></option>
-    <? endforeach; ?>
-    </select>
+    <section class="col-2">
+        <span class="label-text"><?= _('Studienfach') ?></span>
+        <label>
+            <select name="fach_filter">
+                <option value="" <? if($fach_filter == null) {echo 'selected';}?>><?=_('kein Filter') ?></option>
+                <? foreach ($fächer as $fach): ?>
+                <option value="<?= $fach['fach_id'] ?>" <? if($fach_filter == $fach['fach_id']) {echo 'selected';}?>><?= htmlReady($fach['name']); ?></option>
+                <? endforeach; ?>
+            </select>
+        </label>
+    </section>
+    <section class="col-2">
+        <span class="label-text"><?= _('Anzahl Mentees') ?></span>
+        <label>
+            <input type="number" name="mentee_count_filter" min="0" max="8" 
+                value="<?= isset($mentee_count) ? htmlReady($mentee_count) : '' ?>">
+        </label>
+    </section>
+    <label class="col-2">
+    </label>
     <button type="submit" class="button"><?= _('Filter anwenden')?></button>
 </form>
 
