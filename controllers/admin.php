@@ -127,6 +127,9 @@ class AdminController extends PluginController {
         if(!$perm->have_studip_perm('tutor', $this->cid)) {
             throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
         }
+        
+        PageLayout::addStylesheet($this->plugin->getPluginURL() . '/css/oska.css?v=42');
+        PageLayout::addScript($this->plugin->getPluginURL() . '/js/oska.js');
 
         $fach_selection = $fach_selection != 0 ? $fach_selection : null;
         $mentee_count = $mentee_count != null ? intval($mentee_count) : null;

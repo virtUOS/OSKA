@@ -11,6 +11,14 @@ $(function() {
         );
     });
     
+    $(document).on('change', '.oska-filter-checkbox', function(event) {
+        if ($(this).prop('checked')) {
+            $('input[name="mentee_count_filter"]').prop('disabled', false);
+        } else {
+            $('input[name="mentee_count_filter"]').prop('disabled', true);
+        }
+    });
+    
 });
 
 function oska_prefs() {

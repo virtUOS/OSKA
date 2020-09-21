@@ -15,8 +15,11 @@
     <section class="col-2">
         <span class="label-text"><?= _('Anzahl Mentees') ?></span>
         <label>
+            <input type="checkbox" name="mentee_count_activate" class="oska-filter-checkbox" 
+                <?= isset($mentee_count) ? 'checked' : '' ?>>
             <input type="number" name="mentee_count_filter" min="0" max="8" 
-                value="<?= isset($mentee_count) ? htmlReady($mentee_count) : '' ?>">
+                value="<?= isset($mentee_count) ? htmlReady($mentee_count) : '' ?>" 
+                <?= isset($mentee_count) ? '' : 'disabled' ?>>
         </label>
     </section>
     <label class="col-2">
