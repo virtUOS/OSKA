@@ -16,7 +16,12 @@ class MentoringController extends PluginController {
 
     function before_filter(&$action, &$args)
     {
+        global $perm;
         parent::before_filter($action, $args);
+
+        if(!$perm->have_studip_perm('autor', Context::getId())) {
+            throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
+        }
     }
 
     public function index_action()
@@ -47,11 +52,7 @@ class MentoringController extends PluginController {
 
     public function store_profile_action()
     {
-        global $perm, $user;
-
-        if(!$perm->have_studip_perm('autor', Context::getId())) {
-            throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
-        }
+        global $user;
 
         $mentor = OskaMentors::find($user->user_id);
 
@@ -124,11 +125,7 @@ class MentoringController extends PluginController {
 
     public function create_studygroup_action()
     {
-        global $perm, $user;
-
-        if(!$perm->have_studip_perm('autor',Context::getId())) {
-            throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
-        }
+        global $user;
 
         $mentees = OskaMatches::getMentees($user->user_id);
 
@@ -161,12 +158,6 @@ class MentoringController extends PluginController {
 
     public function support_action()
     {
-        global $perm;
-
-        if(!$perm->have_studip_perm('autor', Context::getId())) {
-            throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
-        }
-
         if(Request::get('mentor_name') != '' && Request::get('mentee_name') != '') {
             $mentor = User::findByUsername(Request::option('mentor_name'));
             $mentee = User::findByUsername(Request::option('mentee_name'));

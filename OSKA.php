@@ -118,28 +118,28 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
         } else {
 
             // Show widget only to first semester Bachelor students
-            $is_first_sem = true;
-            $is_bachelor = true;
+            $show_info = false;
             $studycourses = new SimpleCollection(UserStudyCourse::findByUser($GLOBALS['user']->id));
 
             // go through all subjects of the user and check if user is first semester and Bachelor student
             foreach ($studycourses as $studycourse) {
-                if ($studycourse->semester > 1) {
-                    $is_first_sem = false;
-                }
-                if (strpos($studycourse->degree_name, "Bachelor") < 0) {
-                    $is_bachelor = false;
+                if (($studycourse->semester > 1)&&(strpos($studycourse->degree_name, "Bachelor") <= 0)) {
+                    $show_info = true;
                 }
             }
 
+            // show info if user has no subject
+            if(sizeof($studycourses) == 0) {
+                $show_info = true;
+            }
+
             // show info about OSKA if not first semester Bachelor student
-            if (!$is_first_sem || !$is_bachelor || $perm->have_perm('tutor')) {
+            if ($show_info) {
                 $template = $template_factory->open('widget_info');
             } else {
                 // show OSKA widget otherwise
-
                 $show_form = Request::option('show_form');
-                
+
                 if ($show_form) {
                     // show form if button was clicked
                     $template = $template_factory->open('widget_form');
@@ -150,7 +150,6 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
                 }
             }
         }
-        
         $template->title = _('OSKA – Mein*e Mentor*in am Studienanfang');
         $template->oska_image_url = $this->getPluginURL() . '/images/OSKA.jpg';
         $template->oska_footer_image_url = $this->getPluginURL() . '/images/OSKA_footer.png';
