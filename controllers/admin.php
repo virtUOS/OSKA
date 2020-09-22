@@ -274,11 +274,7 @@ class AdminController extends PluginController {
 
     public function export_mentees_action()
     {
-        $this->mentees = [];
-
-        $f = fopen('php://output', 'w');
-        $csv_header = array(_('Vorname'), _('Nachname'), _('Studiengang'), 'OSKA');
-        fputcsv($f, $csv_header, ',');
+        $data = [array(_('Vorname'), _('Nachname'), _('Studiengang'), _('hat OSKA'))];
 
         foreach(OskaMentees::findAllMentees() as $mentee){
             $user = User::find($mentee['user_id']);
@@ -292,25 +288,22 @@ class AdminController extends PluginController {
                     }
                 }
             }
-            $line = array($user->vorname, $user->nachname, $fach, boolval($mentee['has_tutor']));
-            fputcsv($f, $line, ',');
+            $mentee_data = array($user->vorname, $user->nachname, $fach, 
+                'hat einen OSKA'    => boolval($mentee['has_tutor'])
+            );
+            array_push($data, $mentee_data);
         }
 
-        $filename = 'Mentees';
-
-        header('Content-Type: application/csv');
-        header('Content-Disposition: attachment; filename="'.$filename.'.csv";');
-        fpassthru($f);
-        exit();
+        $this->render_csv(
+            $data,
+            'Mentees',
+            ','
+        );
     }
     
     public function export_mentors_action($fach_selection = null, $mentee_count = null)
     {
-        $this->mentors = [];
-
-        $f = fopen('php://output', 'w');
-        $csv_header = array(_('Vorname'), _('Nachname'), _('Studiengang'), _('Anzahl Mentees'));
-        fputcsv($f, $csv_header, ',');
+        $data = [array(_('Vorname'), _('Nachname'), _('Studiengang'), _('Anzahl Mentees'))];
 
         foreach(OskaMentors::findAllMentors() as $mentor){
             if ($mentee_count == '' || $mentor['mentee_counter'] == $mentee_count) {
@@ -329,18 +322,17 @@ class AdminController extends PluginController {
                     }
                 }
                 if ($fach_chosen) {
-                    $line = array($user->vorname, $user->nachname, $fach, intval($mentor['mentee_counter']));
-                    fputcsv($f, $line, ',');
+                    $mentor_data = array($user->vorname, $user->nachname, $fach, intval($mentor['mentee_counter']));
+                    array_push($data, $mentor_data);
                 }
             }
         }
 
-        $filename = 'Mentors';
-
-        header('Content-Type: application/csv');
-        header('Content-Disposition: attachment; filename="'.$filename.'.csv";');
-        fpassthru($f);
-        exit();
+        $this->render_csv(
+            $data,
+            'Mentors',
+            ','
+        );
     }
 
     public function remove_issue_action()
