@@ -1,26 +1,33 @@
 <?php
 
+/**
+ * OSKA controller class for Stud.IP
+ *
+ * @author    Ron Lucke <lucke@elan-ev.de>
+ * @author    Viktoria Wiebe <vwiebe@uni-osnabrueck.de>
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ **/
+
 class AdminController extends PluginController {
     
     function before_filter(&$action, &$args)
     {
         global $perm;
-
         parent::before_filter($action, $args);
-
         $perm->check('tutor');
-
         Navigation::activateItem('/course/oska');
     }
 
     public function index_action()
     {
         PageLayout::addStylesheet($this->plugin->getPluginURL() . '/css/oska.css');
-
-        $this->title = _('Übersicht');
         Navigation::activateItem('/course/oska/admin');
+        $this->title = _('Übersicht');
         $this->issues = OskaMatches::getIssues();
-
         $this->mentees_all = OskaMentees::countMentees(null);
         $this->mentees_without = sizeof(OskaMentees::findBySQL('has_tutor = 0', array()));
 
@@ -31,31 +38,26 @@ class AdminController extends PluginController {
 
         $this->oska_all = OskaMentors::countMentors();
         $this->oska_counters = OskaMentors::getCounters();
-
         $this->pie_bg_colors = array('#28497c', '#7e92b0', '#d4dbe5', '#899ab9', '#b8c2d5', '#e7ebf1', '#536d96', '#a9b6cb', '#a1aec7', '#d0d7e3');
     }
 
     public function matches_action()
     {
         global $perm;
-        $this->cid = Context::getId();
 
-        if(!$perm->have_studip_perm('tutor', $this->cid)) {
+        if(!$perm->have_studip_perm('tutor', Context::getId())) {
             throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
         }
-
-        $this->title = _('Matches');
         Navigation::activateItem('/course/oska/matches');
-
+        $this->title = _('Matches');
         $this->matches = OskaMatches::findAllMaches();
     }
 
     public function mentees_action($page = 1, $fach_selection = null)
     {
         global $perm;
-        $this->cid = Context::getId();
 
-        if(!$perm->have_studip_perm('tutor', $this->cid)) {
+        if(!$perm->have_studip_perm('tutor', Context::getId())) {
             throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
         }
 
@@ -67,7 +69,7 @@ class AdminController extends PluginController {
         $this->mentees          = [];
         $this->mentees_usernames = [];
         $this->mentees_counter  = OskaMentees::countMentees($fach_selection);
-        $this->fächer           = $this->getFächer();
+        $this->fächer           = $this->getSubjects();
         $this->fach_filter      = $fach_selection;
 
         $oska_mentees = OskaMentees::findAllMentees(
@@ -113,7 +115,7 @@ class AdminController extends PluginController {
                 'rec_uname'       => $this->mentees_usernames,
                 'default_subject' => _(''),
             ]),
-            
+
             Icon::create('mail', 'clickable'),
             ['data-dialog' => '']
             );  
@@ -127,33 +129,31 @@ class AdminController extends PluginController {
         if(!$perm->have_studip_perm('tutor', $this->cid)) {
             throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
         }
-        
+
         PageLayout::addStylesheet($this->plugin->getPluginURL() . '/css/oska.css?v=42');
         PageLayout::addScript($this->plugin->getPluginURL() . '/js/oska.js');
 
         $fach_selection = $fach_selection != 0 ? $fach_selection : null;
         $mentee_count = $mentee_count != null ? intval($mentee_count) : null;
-        
+
         Navigation::activateItem('/course/oska/mentors');
-        $this->title            = _('Mentoren');
-        $this->page             = (int) $page;
-        $this->user             = $GLOBALS['user'];
-        $this->entries_per_page = Config::get()->ENTRIES_PER_PAGE;
-        $this->mentors          = [];
+        $this->title             = _('Mentoren');
+        $this->page              = (int) $page;
+        $this->user              = $GLOBALS['user'];
+        $this->entries_per_page  = Config::get()->ENTRIES_PER_PAGE;
+        $this->mentors           = [];
         $this->mentors_usernames = [];
-        $this->mentors_counter  = OskaMentors::countMentorsWithFilter($fach_selection, $mentee_count);
-        $this->fächer           = $this->getFächer('mentors');
-        $this->fach_filter      = $fach_selection;
-        $this->mentee_count     = $mentee_count;
+        $this->mentors_counter   = OskaMentors::countMentorsWithFilter($fach_selection, $mentee_count);
+        $this->fächer            = $this->getSubjects('mentors');
+        $this->fach_filter       = $fach_selection;
+        $this->mentee_count      = $mentee_count;
 
         $oska_mentors = OskaMentors::findAllMentors(
             ($this->page - 1) * $this->entries_per_page, // lower bound
             $this->entries_per_page, // elements per page
             $fach_selection //fach filter
         );
-        
 
-        
         if (isset($this->mentee_count)) {
             $oska_mentors = array_filter(
                 $oska_mentors, function($mentor) {
@@ -199,7 +199,7 @@ class AdminController extends PluginController {
                 'rec_uname'       => $this->mentors_usernames,
                 'default_subject' => _(''),
             ]),
-            
+
             Icon::create('mail', 'clickable'),
             ['data-dialog' => '']
             );  
@@ -208,7 +208,6 @@ class AdminController extends PluginController {
     public function fach_filter_action()
     {
         $fach_id = Request::get('fach_filter');
-
         $this->redirect('admin/mentees/1/'.$fach_id);
     }
     
@@ -216,16 +215,14 @@ class AdminController extends PluginController {
     {
         $fach_id = Request::get('fach_filter') ?: 0;
         $mentee_count_filter = Request::get('mentee_count_filter') !== '' ? Request::int('mentee_count_filter') : null;
-
         $this->redirect('admin/mentors/1/'.$fach_id.'/'.$mentee_count_filter);
     }
 
     public function set_match_action()
     {
         global $perm;
-        $this->cid = Context::getId();
 
-        if(!$perm->have_studip_perm('tutor', $this->cid)) {
+        if(!$perm->have_studip_perm('tutor', Context::getId())) {
             throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
         }
 
@@ -282,9 +279,8 @@ class AdminController extends PluginController {
     public function store_match_action()
     {
         global $perm;
-        $this->cid = Context::getId();
 
-        if(!$perm->have_studip_perm('tutor', $this->cid)) {
+        if(!$perm->have_studip_perm('tutor', Context::getId())) {
             throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
         }
 
@@ -308,9 +304,8 @@ class AdminController extends PluginController {
     public function export_mentees_action()
     {
         global $perm;
-        $this->cid = Context::getId();
 
-        if(!$perm->have_studip_perm('tutor', $this->cid)) {
+        if(!$perm->have_studip_perm('tutor', Context::getId())) {
             throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
         }
 
@@ -348,9 +343,8 @@ class AdminController extends PluginController {
     {
     
         global $perm;
-        $this->cid = Context::getId();
 
-        if(!$perm->have_studip_perm('tutor', $this->cid)) {
+        if(!$perm->have_studip_perm('tutor', Context::getId())) {
             throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
         }
 
@@ -394,9 +388,8 @@ class AdminController extends PluginController {
     public function remove_issue_action()
     {
         global $perm;
-        $this->cid = Context::getId();
 
-        if(!$perm->have_studip_perm('tutor', $this->cid)) {
+        if(!$perm->have_studip_perm('tutor', Context::getId())) {
             throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
         }
 
@@ -412,9 +405,8 @@ class AdminController extends PluginController {
     public function delete_match_action()
     {
         global $perm;
-        $this->cid = Context::getId();
 
-        if(!$perm->have_studip_perm('tutor', $this->cid)) {
+        if(!$perm->have_studip_perm('tutor', Context::getId())) {
             throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
         }
 
@@ -437,15 +429,14 @@ class AdminController extends PluginController {
         $this->redirect('admin');
     }
 
-    private function getFächer($role = NULL)
+    private function getSubjects($role = NULL)
     {
-             
         if ($role == 'mentors') {
             $role_table = 'oska_mentors';
         } else {
             $role_table = 'oska_mentees';
         }
-    
+
         $sql = "SELECT DISTINCT fach.fach_id, fach.name FROM $role_table JOIN user_studiengang " . 
                "on $role_table.user_id = user_studiengang.user_id JOIN fach " . 
                "on user_studiengang.fach_id = fach.fach_id join abschluss " . 
@@ -454,8 +445,8 @@ class AdminController extends PluginController {
 
         $statement = DBManager::get()->prepare($sql);
         $statement->execute($parameters);
-        $fächer = $statement->fetchAll();
+        $subjects = $statement->fetchAll();
 
-        return $fächer;
+        return $subjects;
     }
 }

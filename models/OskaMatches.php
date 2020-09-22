@@ -1,13 +1,21 @@
 <?php
 
 /**
- * @author  <lucke@elan-ev.de>
+ * OSKA model class for Stud.IP
  *
+ * @author    Ron Lucke <lucke@elan-ev.de>
+ * @author    Viktoria Wiebe <vwiebe@uni-osnabrueck.de>
+ * 
  * @property int     $mentor_id
  * @property int     $mentee_id
  * @property bool    $issue
  * @property int     $mkdate
  * @property int     $chdate
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
  */
 
 class OskaMatches extends SimpleORMap

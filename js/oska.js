@@ -1,6 +1,5 @@
 
 $(function() {
-    
     $(document).on('click', '#open-oska-form', function(event) {
         $('#oska-widget').load(STUDIP.URLHelper.getURL('dispatch.php/start') + ' #oska-widget>*', 
             {'show_form': 'true'}, 
@@ -10,7 +9,7 @@ $(function() {
             }
         );
     });
-    
+
     $(document).on('change', '.oska-filter-checkbox', function(event) {
         if ($(this).prop('checked')) {
             $('input[name="mentee_count_filter"]').prop('disabled', false);

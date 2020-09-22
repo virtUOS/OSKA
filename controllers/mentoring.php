@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * OSKA controller class for Stud.IP
+ *
+ * @author    Ron Lucke <lucke@elan-ev.de>
+ * @author    Viktoria Wiebe <vwiebe@uni-osnabrueck.de>
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ **/
+
 class MentoringController extends PluginController {
 
     function before_filter(&$action, &$args)
@@ -31,15 +43,13 @@ class MentoringController extends PluginController {
             $this->mentor = $mentor->getProfile();
             $this->default_data = false;
         }
-
     }
 
     public function store_profile_action()
     {
         global $perm, $user;
-        $this->cid = Context::getId();
 
-        if(!$perm->have_studip_perm('autor', $this->cid)) {
+        if(!$perm->have_studip_perm('autor', Context::getId())) {
             throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
         }
 
@@ -68,12 +78,12 @@ class MentoringController extends PluginController {
         }
 
         $abilities = [
-            'migration'       => Request::int('migration'),
-            'firstgen'     => Request::int('firstgen'),
-            'children'      => Request::int('children'),
-            'apprentice'    => Request::int('apprentice'),
-            'lehramt_detail'      => $teacher_detail,
-            'studycourse'   => Request::option('studycourse')
+            'migration'         => Request::int('migration'),
+            'firstgen'          => Request::int('firstgen'),
+            'children'          => Request::int('children'),
+            'apprentice'        => Request::int('apprentice'),
+            'lehramt_detail'    => $teacher_detail,
+            'studycourse'       => Request::option('studycourse')
         ];
         $mentor->abilities = json_encode($abilities);
 
@@ -96,7 +106,6 @@ class MentoringController extends PluginController {
 
         $sidebar = Sidebar::Get();
 
-
         $actions = $sidebar->addWidget(new ActionsWidget());
         if (!$this->has_studygroup()) {
             $actions->addLink(
@@ -116,9 +125,8 @@ class MentoringController extends PluginController {
     public function create_studygroup_action()
     {
         global $perm, $user;
-        $this->cid = Context::getId();
 
-        if(!$perm->have_studip_perm('autor', $this->cid)) {
+        if(!$perm->have_studip_perm('autor',Context::getId())) {
             throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
         }
 
@@ -154,9 +162,8 @@ class MentoringController extends PluginController {
     public function support_action()
     {
         global $perm;
-        $this->cid = Context::getId();
 
-        if(!$perm->have_studip_perm('autor', $this->cid)) {
+        if(!$perm->have_studip_perm('autor', Context::getId())) {
             throw new AccessDeniedException('Sie verfügen nicht über die notwendigen Rechte für diese Aktion');
         }
 

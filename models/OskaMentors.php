@@ -1,8 +1,11 @@
 <?php
 
 /**
- * @author  <lucke@elan-ev.de>
+ * OSKA model class for Stud.IP
  *
+ * @author    Ron Lucke <lucke@elan-ev.de>
+ * @author    Viktoria Wiebe <vwiebe@uni-osnabrueck.de>
+ * 
  * @property int     $user_id
  * @property bool    $teacher
  * @property json    $abilities
@@ -10,6 +13,11 @@
  * @property string  $description
  * @property int     $mkdate
  * @property int     $chdate
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
  */
 
 class OskaMentors extends SimpleORMap
@@ -64,19 +72,18 @@ class OskaMentors extends SimpleORMap
     public function getMentorPrefStudycourse()
     {
         $abilities = json_decode($this->abilities);
-        
+
         return $abilities->studycourse;
     }
 
     public function getMentorStudycourses()
     {
         $studycourses = new SimpleCollection(UserStudyCourse::findByUser($this->user_id));
-        
         $studycourse_data = [];
         foreach ($studycourses as $studycourse) {
             $studycourse_data[$studycourse->fach_id] = $studycourse->studycourse_name;
         }
-        
+
         return $studycourse_data;
     }
 
@@ -97,7 +104,15 @@ class OskaMentors extends SimpleORMap
 
     public function getCounters()
     {
-        $sql = "SELECT mentee_counter, COUNT(*) as count FROM oska_mentors GROUP BY mentee_counter ORDER BY mentee_counter ASC";
+        $sql = "
+            SELECT 
+                mentee_counter, COUNT(*) as count
+            FROM 
+                oska_mentors
+            GROUP BY
+                mentee_counter 
+            ORDER BY 
+                mentee_counter ASC";
 
         $statement = DBManager::get()->prepare($sql);
         $statement->execute($parameters);
@@ -105,12 +120,12 @@ class OskaMentors extends SimpleORMap
 
         return $counters;
     }
-    
+
     public function countMentorsWithFilter($fach_selection, $mentee_counter)
     {
         return count(self::findAllMentors(1, null, $fach_selection, $mentee_counter));
     }
-    
+
     public function findAllMentors($lower_bound = 1, $elements_per_page = null, $fach_id = null, $mentee_counter = null)
     {
         $sql = "
@@ -125,12 +140,12 @@ class OskaMentors extends SimpleORMap
         if($fach_id != null) {
             $sql .= " WHERE fach_id = '" . $fach_id . "'";
         }
-        
+
         if ($mentee_counter != null) {
             $sql .= $fach_id != null ? " AND" : " WHERE";
             $sql .= " mentee_counter = $mentee_counter";
         }
-        
+
         $sql .= " GROUP BY oska_mentors.user_id";
         
         if($elements_per_page != null){
@@ -143,5 +158,4 @@ class OskaMentors extends SimpleORMap
 
         return $mentors;
     }
-    
 }

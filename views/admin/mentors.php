@@ -1,4 +1,4 @@
-<h1 class="oska-page-title"><?= _('Mentoren') ?> (<?= $mentors_counter?>)</h1>
+<h1 class="oska-page-title"><?= htmlReady($title) ?> (<?= htmlReady($mentors_counter) ?>)</h1>
 
 <form action="<?= $controller->link_for('admin/fach_filter_mentor');?>" class="default" method="post">
     <section class="col-2">

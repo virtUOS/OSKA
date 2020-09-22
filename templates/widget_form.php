@@ -5,13 +5,13 @@
             Um eine*n passenden OSKA für dich ausfindig zu machen, bitten wir dich 
             die folgenden Felder auszufüllen. Deine Angaben werden dazu verwendet, 
             eine*n passenden OSKA für dich zu finden.') ?></p>
-            
+
             <form class="default" action="<?= PluginEngine::getLink('OSKA/widget/add_mentee') ?>" 
                 method="post" id="oska-add-mentee">
             <?= CSRFProtection::tokenTag() ?>
-            
+
             <fieldset class="oska-form-general">
-            
+
                 <section class="col-5">
                 <div>
                     <label class="label_text"><?= _('Welches Fach soll dein*e OSKA studieren?') ?><br>
@@ -30,7 +30,7 @@
                     </label>
                 </div>
                 </section>
-                
+
                 <section class="col-2">
                     <span class="label-text"><?= _('Studierst du mit dem Ziel Lehramt?') ?></span>
                     <div class="hgroup">
@@ -42,7 +42,7 @@
                         </label>
                     </div>
                 </section>
-                
+
                 <section class="col-4" id="teacher-type" style="display: none;">
                     <span class="label-text"><?= _('Wenn ja, welches Lehramt strebst du an?') ?></span>
                     <div class="hgroup">
@@ -57,7 +57,7 @@
                         </label>
                     </div>
                 </section>
-                
+
                 <section>
                     <span class="label-text"><?= _('Welches Geschlecht sollte dein*e OSKA haben?') ?></span>
                     <div class="hgroup">
@@ -76,14 +76,14 @@
                     </div>
                 </section>
             </fieldset>
-            
+
             <fieldset>
             <label>
                 <?= _('Mir ist besonders wichtig, dass mein*e OSKA: 
                 (Wenn dir einzelne Eigenschaften bei deinem*deiner OSKA wichtig sind, 
                 kannst du diese in die untenstehende Box ziehen.)') ?>
             </label>
-            
+
             <div class="oska-form-prefs">
                 <div class="oska-pref-list" data-group="1" title="<?= _('Element hier ablegen') ?>">
                 </div>
@@ -108,7 +108,7 @@
                 </div>
 
             </div>
-            
+
             </fieldset>
             <?= Studip\Button::create(_('OSKA für mich finden'), 'oska_matching_button', 
                 ['class' => 'oska-find']) ?>

@@ -64,8 +64,6 @@
         </tbody>
 </table>
 
-
-
 <table class="default">
     <colgroup>
         <col width="60">

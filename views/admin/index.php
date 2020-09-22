@@ -53,7 +53,7 @@
                     <th style="text-align: right"><?= _('Aktionen') ?></th>
                 </tr>
             </thead>
-    
+
     <? foreach ($issues as $issue): ?>
         <tr>
             <td><?= htmlReady($issue['mentor']->nachname). ', ' . htmlReady($issue['mentor']->vorname)?></td>

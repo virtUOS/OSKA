@@ -1,6 +1,4 @@
-<?
-    use Studip\Button;
-?>
+<? use Studip\Button; ?>
 
 <form class="default" action="<?= $controller->link_for('mentoring/store_profile') ?>" method="post">
     <fieldset>
@@ -55,7 +53,7 @@
                 </label>
             </div>
         </section>
-        
+
         <label class="col-1">
         </label>
 
@@ -189,4 +187,4 @@
         });
         $('input[name="lehramt"]').trigger('change');
     });
-    </script>
+</script>
