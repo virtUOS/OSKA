@@ -1,4 +1,4 @@
-<h1>Mentees (<?= $mentees_counter?>)</h1>
+<h1 class="oska-page-title">Mentees (<?= $mentees_counter?>)</h1>
 
 <form action="<?= $controller->link_for('admin/fach_filter');?>" class="default" method="post">
     <select name="fach_filter">

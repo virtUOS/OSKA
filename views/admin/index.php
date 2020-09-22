@@ -1,4 +1,4 @@
-<h1><?= $title ?></h1>
+<h1 class="oska-page-title"><?= $title ?></h1>
 
 <div class="oska-pie-wrapper">
     <h2>Mentee (<?= htmlReady($mentees_all)?>)</h2>
@@ -38,21 +38,22 @@
         </div>
     <? endif; ?>
 </div>
-
-<h2><?= _('Gemeldete Probleme') ?></h2>
-<table class="sortable-table default">
-    <colgroup>
-        <col>
-        <col>
-        <col width="80">
-    </colgroup>
-        <thead>
-            <tr>
-                <th data-sort="text"><?= _('Mentor (Nachname, Vorname)') ?></th>
-                <th data-sort="text"><?= _('Mentee (Nachname, Vorname)') ?></th>
-                <th style="text-align: right"><?= _('Aktionen') ?></th>
-            </tr>
-        </thead>
+<? if(sizeof($issues) > 0): ?>
+    <h2><?= _('Gemeldete Probleme') ?></h2>
+    <table class="sortable-table default">
+        <colgroup>
+            <col>
+            <col>
+            <col width="80">
+        </colgroup>
+            <thead>
+                <tr>
+                    <th data-sort="text"><?= _('Mentor (Nachname, Vorname)') ?></th>
+                    <th data-sort="text"><?= _('Mentee (Nachname, Vorname)') ?></th>
+                    <th style="text-align: right"><?= _('Aktionen') ?></th>
+                </tr>
+            </thead>
+    
     <? foreach ($issues as $issue): ?>
         <tr>
             <td><?= htmlReady($issue['mentor']->nachname). ', ' . htmlReady($issue['mentor']->vorname)?></td>
@@ -107,4 +108,5 @@
             </td>
         </tr>
     <? endforeach; ?>
+<? endif; ?>
 </table>

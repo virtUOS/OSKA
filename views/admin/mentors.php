@@ -1,4 +1,4 @@
-<h1><?= _('Mentoren') ?> (<?= $mentors_counter?>)</h1>
+<h1 class="oska-page-title"><?= _('Mentoren') ?> (<?= $mentors_counter?>)</h1>
 
 <form action="<?= $controller->link_for('admin/fach_filter_mentor');?>" class="default" method="post">
     <section class="col-2">
@@ -12,7 +12,7 @@
             </select>
         </label>
     </section>
-    <section class="col-2">
+    <section class="col-1">
         <span class="label-text"><?= _('Anzahl Mentees') ?></span>
         <label>
             <input type="checkbox" name="mentee_count_activate" class="oska-filter-checkbox" 
@@ -22,16 +22,17 @@
                 <?= isset($mentee_count) ? '' : 'disabled' ?>>
         </label>
     </section>
-    <label class="col-2">
-    </label>
-    <button type="submit" class="button"><?= _('Filter anwenden')?></button>
+    <section class="col-1" style="vertical-align: bottom">
+        <button type="submit" class="button" style="margin:1em;"><?= _('Filter anwenden')?></button>
+    </section>
+    
 </form>
 
 <table class="sortable-table default">
     <colgroup>
         <col width="600">
         <col>
-        <col width="60">
+        <col width="120">
         <col width="80">
     </colgroup>
         <thead>

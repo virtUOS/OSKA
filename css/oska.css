@@ -161,4 +161,9 @@
 
 .oska-filter-checkbox {
     float: left;
+    margin: 0.5em;
+}
+
+.oska-page-title {
+    line-height: 1.25em;
 }

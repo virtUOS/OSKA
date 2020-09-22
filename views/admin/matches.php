@@ -1,4 +1,4 @@
-<h1>Matches</h1>
+<h1 class="oska-page-title">Matches</h1>
 
 <table class="sortable-table default">
     <colgroup>
