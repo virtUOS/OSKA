@@ -26,8 +26,14 @@ class WidgetController extends PluginController {
     {
         CSRFProtection::verifyUnsafeRequest();
 
+        $studycourse = Request::option('studycourse');
+
+        if ($studycourse == '') {
+            throw new Exception(_('Es wurde kein Studiengang ausgewählt!'));
+        }
+
         $preferences = [
-            'studycourse'   => Request::option('studycourse'),
+            'studycourse'   => $studycourse,
             'gender'        => Request::int('gender'),
             'migration'       => Request::int('migration'),
             'firstgen'     => Request::int('firstgen'),
