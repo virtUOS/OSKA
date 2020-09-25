@@ -15,7 +15,8 @@
 }
 
 .oska-img {
-    width: 420px;
+    width: 60%;
+    max-width: 420px;
 }
 
 @media only screen and (max-width: 480px) {
