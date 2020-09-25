@@ -25,7 +25,7 @@ class AdminController extends PluginController {
 
     public function index_action()
     {
-        PageLayout::addStylesheet($this->plugin->getPluginURL() . '/css/oska.css');
+        PageLayout::addStylesheet($this->plugin->getPluginURL() . '/css/oska.css?v=42');
         Navigation::activateItem('/course/oska/admin');
         $this->title = _('Übersicht');
         $this->issues = OskaMatches::getIssues();
@@ -75,9 +75,7 @@ class AdminController extends PluginController {
             foreach ($user->studycourses as $index => $val) {
                 $fach .= $val->studycourse->name;
                 if ($index != $len -1) {
-                    $fach .= ', ';        if($elements_per_page != null){
-                        $sql .= " LIMIT ". $lower_bound. ', '. $elements_per_page;
-                    }
+                    $fach .= ', ';
                 }
             }
             array_push($this->mentees_usernames, $user->username);
@@ -152,9 +150,7 @@ class AdminController extends PluginController {
             foreach ($user->studycourses as $index => $val) {
                 $fach .= $val->studycourse->name;
                 if ($index != $len -1) {
-                    $fach .= ', ';        if($elements_per_page != null){
-                        $sql .= " LIMIT ". $lower_bound. ', '. $elements_per_page;
-                    }
+                    $fach .= ', ';
                 }
             }
             array_push($this->mentors_usernames, $user->username);
@@ -193,7 +189,7 @@ class AdminController extends PluginController {
         $fach_id = Request::get('fach_filter');
         $this->redirect('admin/mentees/1/'.$fach_id);
     }
-    
+
     public function fach_filter_mentor_action()
     {
         $fach_id = Request::get('fach_filter') ?: 0;
@@ -283,9 +279,7 @@ class AdminController extends PluginController {
             foreach ($user->studycourses as $index => $val) {
                 $fach .= $val->studycourse->name;
                 if ($index != $len -1) {
-                    $fach .= ', ';        if($elements_per_page != null){
-                        $sql .= " LIMIT ". $lower_bound. ', '. $elements_per_page;
-                    }
+                    $fach .= ', ';
                 }
             }
             $mentee_data = array($user->vorname, $user->nachname, $fach, 
@@ -316,9 +310,7 @@ class AdminController extends PluginController {
                     }
                     $fach .= $val->studycourse->name;
                     if ($index != $len -1) {
-                        $fach .= ', ';        if($elements_per_page != null){
-                            $sql .= " LIMIT ". $lower_bound. ', '. $elements_per_page;
-                        }
+                        $fach .= ', ';
                     }
                 }
                 if ($fach_chosen) {
