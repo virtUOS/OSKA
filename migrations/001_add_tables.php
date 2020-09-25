@@ -35,7 +35,7 @@ class AddTables extends Migration
           `mentee_id` VARCHAR(32) NOT NULL,
           `issue` BOOLEAN NOT NULL DEFAULT FALSE,
           `mkdate` INT(11) NOT NULL DEFAULT 0,
-          `chdate` INT(11) NOT NULL DEFAULT 0
+          `chdate` INT(11) NOT NULL DEFAULT 0,
           PRIMARY KEY (`mentor_id`, `mentee_id`)
         )');
 
