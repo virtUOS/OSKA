@@ -18,7 +18,6 @@ require_once 'models/OskaMatches.php';
 
 class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
 {
-    
     public function __construct()
     {
         global $perm;
@@ -27,6 +26,12 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
 
         // set up translation domain
         bindtextdomain('OSKA', dirname(__FILE__) . '/locale');
+
+        StudipAutoloader::addClassLookups([
+            'OskaMatches' => __DIR__ . '/models/OskaMatches.php',
+            'OskaMentees' => __DIR__ . '/models/OskaMentees.php',
+            'OskaMentors' => __DIR__ . '/models/OskaMentors.php',
+        ]);
     }
 
     /**
