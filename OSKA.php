@@ -124,7 +124,7 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
 
             // go through all subjects of the user and check if user is first semester and Bachelor student
             foreach ($studycourses as $studycourse) {
-                if ($studycourse->semester > 1 || strpos($studycourse->degree_name, "Bachelor") !== false) {
+                if ($studycourse->semester > 1 || strpos($studycourse->degree_name, "Bachelor") === false) {
                     $show_info = true;
                 }
             }
