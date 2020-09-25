@@ -17,8 +17,8 @@ class AddTables extends Migration
           `abilities` TEXT NOT NULL,
           `mentee_counter` TINYINT(1) NOT NULL DEFAULT 0 ,
           `description` TEXT NOT NULL COLLATE utf8mb4_unicode_ci,
-          `mkdate` DATETIME NOT NULL DEFAULT 0,
-          `chdate` DATETIME ON UPDATE CURRENT_TIMESTAMP NOT NULL
+          `mkdate` INT(11) NOT NULL DEFAULT 0,
+          `chdate` INT(11) NOT NULL DEFAULT 0
         )');
 
         $db->exec('CREATE TABLE IF NOT EXISTS `oska_mentees` (
@@ -26,16 +26,16 @@ class AddTables extends Migration
           `teacher` BOOLEAN NOT NULL DEFAULT FALSE,
           `preferences` TEXT NOT NULL,
           `has_tutor` BOOLEAN NOT NULL DEFAULT FALSE ,
-          `mkdate` DATETIME NOT NULL DEFAULT 0,
-          `chdate` DATETIME ON UPDATE CURRENT_TIMESTAMP NOT NULL
+          `mkdate` INT(11) NOT NULL DEFAULT 0,
+          `chdate` INT(11) NOT NULL DEFAULT 0
         )');
 
         $db->exec('CREATE TABLE IF NOT EXISTS `oska_matches` (
           `mentor_id` VARCHAR(32) NOT NULL,
           `mentee_id` VARCHAR(32) NOT NULL,
           `issue` BOOLEAN NOT NULL DEFAULT FALSE,
-          `mkdate` DATETIME DEFAULT 0 NOT NULL,
-          `chdate` DATETIME ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+          `mkdate` INT(11) NOT NULL DEFAULT 0,
+          `chdate` INT(11) NOT NULL DEFAULT 0
           PRIMARY KEY (`mentor_id`, `mentee_id`)
         )');
 
