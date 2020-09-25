@@ -12,10 +12,6 @@
  * the License, or (at your option) any later version.
  */
 
-require_once 'models/OskaMentors.php';
-require_once 'models/OskaMentees.php';
-require_once 'models/OskaMatches.php';
-
 class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
 {
     public function __construct()
