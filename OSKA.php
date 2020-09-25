@@ -181,7 +181,7 @@ class OSKA extends StudIPPlugin implements StandardPlugin, PortalPlugin
 
     public function isActivatableForContext(Range $context) {
         // hard code which course this plugin is activatable for via course ID
-        if ($context->id == '3f28a0f6c986f45e434ea2433f53a936') {
+        if ($context->id == '259cbb68b9464c908c2318a32eef1f8c') {
             return true;
         }
 
