@@ -135,7 +135,7 @@ class OskaCronjob extends CronJob
             }
 
             if ($mentors) {
-                $matched_mentor = $mentors[0];
+                $matched_mentor = reset($mentors);
                 OskaMatches::create(['mentor_id' => $matched_mentor->user_id, 
                 'mentee_id' => $mentee->user_id]);
 
