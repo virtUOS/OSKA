@@ -56,10 +56,9 @@ class OskaCronjob extends CronJob
     */
     public function execute($last_result, $parameters = [])
     {
-        $max_mentees = 8;
+        $max_mentees = 9;
 
         $mentees = OskaMentees::findBySql('has_tutor = 0');
-        $all_mentors = OskaMentors::findBySql("mentee_counter < ?", [$max_mentees]);
 
         foreach ($mentees as $mentee) {
 
@@ -67,6 +66,7 @@ class OskaCronjob extends CronJob
             // and only select mentors who don't have the maximum of mentees
             $mentee_studycourse = $mentee->getMenteePrefStudycourse();
 
+            $all_mentors = OskaMentors::findBySql("mentee_counter < ? ORDER BY mentee_counter", [$max_mentees]);
             $mentors = [];
             foreach ($all_mentors as $mentor) {
                 if($mentor->getMentorPrefStudycourse() == $mentee_studycourse) {
@@ -75,10 +75,10 @@ class OskaCronjob extends CronJob
             }
 
             // match according to whether mentee studies to become a teacher
-            if (!empty($mentors)) {
+            if ($mentors) {
                 $mentors_tmp = array_filter(
                     $mentors,
-                    function ($mentor) {
+                    function ($mentor) use ($mentee){
                         return $mentor->teacher == $mentee->teacher;
                     }
                 );
@@ -90,7 +90,7 @@ class OskaCronjob extends CronJob
             // match according to preferences
             // create a sum over all picked preferences and pick all the mentors
             // with the maximum sum reached
-            if (!empty($mentors)) {
+            if ($mentors) {
 
                 $mentor_prefsums = [];
                 $preferences['lehramt_detail'] = $mentee->getMenteePreferences('lehramt_detail');
@@ -124,7 +124,7 @@ class OskaCronjob extends CronJob
                 // pick only mentors that have the highest number of matching preferences/abilities
                 $mentors_tmp = array_filter(
                     $mentors,
-                    function ($mentor) {
+                    function ($mentor) use ($max_prefsum, $mentor_prefsums) {
                         return ($mentor_prefsums[$mentor->user_id] == $max_prefsum);
                     }
                 );
@@ -134,36 +134,18 @@ class OskaCronjob extends CronJob
                 }
             }
 
-            if (!empty($mentors)) {
-                // pick mentors with smallest number of mentees
-                if (count($mentors) > 1) {
-                    $mentors_tmp = [];
-                    foreach($mentors as $mentor) {
-                        $mentors_tmp[$mentor->user_id] = $mentor->mentee_counter;
-                    }
-                    $min_mentee_count = min($mentors_tmp);
-                    $mentors = array_filter(
-                        $mentors,
-                        function ($mentor) {
-                            return $mentor->mentee_counter == $min_mentee_count;
-                        }
-                    );
-                }
+            if ($mentors) {
+                $matched_mentor = $mentors[0];
+                OskaMatches::create(['mentor_id' => $matched_mentor->user_id, 
+                'mentee_id' => $mentee->user_id]);
 
-                // randomly pick one mentor from list
-                $matched_mentor = $mentors[mt_rand(0, count($mentors) - 1)];
-                if (!empty($matched_mentor->user_id)) {
-                    OskaMatches::create(['mentor_id' => $matched_mentor->user_id, 
-                    'mentee_id' => $mentee->user_id]);
+                // update mentee
+                $mentee->has_tutor = 1;
+                $mentee->store();
 
-                    // update mentee
-                    $mentee->has_tutor = 1;
-                    $mentee->store();
-
-                    // update mentor
-                    $matched_mentor->mentee_counter++;
-                    $matched_mentor->store();
-                }
+                // update mentor
+                $matched_mentor->mentee_counter++;
+                $matched_mentor->store();
             }
         }
     }
