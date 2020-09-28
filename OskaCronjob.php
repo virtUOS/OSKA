@@ -75,7 +75,7 @@ class OskaCronjob extends CronJob
             }
 
             // match according to whether mentee studies to become a teacher
-            if ($mentors) {
+            if (!empty($mentors)) {
                 $mentors_tmp = array_filter(
                     $mentors,
                     function ($mentor) {
@@ -90,7 +90,7 @@ class OskaCronjob extends CronJob
             // match according to preferences
             // create a sum over all picked preferences and pick all the mentors
             // with the maximum sum reached
-            if ($mentors) {
+            if (!empty($mentors)) {
 
                 $mentor_prefsums = [];
                 $preferences['lehramt_detail'] = $mentee->getMenteePreferences('lehramt_detail');
@@ -134,7 +134,7 @@ class OskaCronjob extends CronJob
                 }
             }
 
-            if ($mentors) {
+            if (!empty($mentors)) {
                 // pick mentors with smallest number of mentees
                 if (count($mentors) > 1) {
                     $mentors_tmp = [];
@@ -152,17 +152,18 @@ class OskaCronjob extends CronJob
 
                 // randomly pick one mentor from list
                 $matched_mentor = $mentors[mt_rand(0, count($mentors) - 1)];
+                if (!empty($matched_mentor->user_id)) {
+                    OskaMatches::create(['mentor_id' => $matched_mentor->user_id, 
+                    'mentee_id' => $mentee->user_id]);
 
-                OskaMatches::create(['mentor_id' => $matched_mentor->user_id, 
-                                     'mentee_id' => $mentee->user_id]);
+                    // update mentee
+                    $mentee->has_tutor = 1;
+                    $mentee->store();
 
-                // update mentee
-                $mentee->has_tutor = 1;
-                $mentee->store();
-
-                // update mentor
-                $matched_mentor->mentee_counter++;
-                $matched_mentor->store();
+                    // update mentor
+                    $matched_mentor->mentee_counter++;
+                    $matched_mentor->store();
+                }
             }
         }
     }
