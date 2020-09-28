@@ -41,7 +41,6 @@ class OskaCronjob extends CronJob
     public function setUp()
     {
         global $STUDIP_BASE_PATH;
-        
         require_once $STUDIP_BASE_PATH . '/public/plugins_packages/virtUOS/OSKA/models/OskaMentors.php';
         require_once $STUDIP_BASE_PATH . '/public/plugins_packages/virtUOS/OSKA/models/OskaMentees.php';
         require_once $STUDIP_BASE_PATH . '/public/plugins_packages/virtUOS/OSKA/models/OskaMatches.php';
@@ -58,19 +57,23 @@ class OskaCronjob extends CronJob
     public function execute($last_result, $parameters = [])
     {
         $max_mentees = 8;
-        
+
         $mentees = OskaMentees::findBySql('has_tutor = 0');
-        
+        $all_mentors = OskaMentors::findBySql("mentee_counter < ?", [$max_mentees]);
+
         foreach ($mentees as $mentee) {
 
             // match according to preferred studycourse of mentee
             // and only select mentors who don't have the maximum of mentees
             $mentee_studycourse = $mentee->getMenteePrefStudycourse();
-            
-            $mentors = OskaMentors::findBySql("abilities->'$.studycourse' = ? " . 
-                                              "AND oska_mentors.mentee_counter < ?", 
-                                    [$mentee_studycourse, $max_mentees]);
-            
+
+            $mentors = [];
+            foreach ($all_mentors as $mentor) {
+                if($mentor->getMentorPrefStudycourse() == $mentee_studycourse) {
+                    array_push($mentors, $mentor);
+                }
+            }
+
             // match according to whether mentee studies to become a teacher
             if ($mentors) {
                 $mentors_tmp = array_filter(
@@ -79,17 +82,16 @@ class OskaCronjob extends CronJob
                         return $mentor->teacher == $mentee->teacher;
                     }
                 );
-                
                 if ($mentors_tmp) {
                     $mentors = $mentors_tmp;
                 }
             }
-            
+
             // match according to preferences
             // create a sum over all picked preferences and pick all the mentors
             // with the maximum sum reached
             if ($mentors) {
-                
+
                 $mentor_prefsums = [];
                 $preferences['lehramt_detail'] = $mentee->getMenteePreferences('lehramt_detail');
                 $preferences['firstgen'] = $mentee->getMenteePreferences('firstgen');
@@ -97,7 +99,7 @@ class OskaCronjob extends CronJob
                 $preferences['apprentice'] = $mentee->getMenteePreferences('apprentice');
                 $preferences['migration'] = $mentee->getMenteePreferences('migration');
                 $preferences['gender'] = $mentee->getMenteePrefGender();
-                
+
                 foreach ($mentors as $mentor) {
                     $abilities['lehramt_detail'] = $mentor->getMentorAbilities('lehramt_detail');
                     $abilities['firstgen'] = $mentor->getMentorAbilities('firstgen');
@@ -105,9 +107,9 @@ class OskaCronjob extends CronJob
                     $abilities['apprentice'] = $mentor->getMentorAbilities('apprentice');
                     $abilities['migration'] = $mentor->getMentorAbilities('migration');
                     $abilities['gender'] = User::find($mentor->user_id)->geschlecht;
-                    
+
                     $mentor_prefsums[$mentor->user_id] = 0;
-                    
+
                     // calculate number of matching preferences/abilities
                     foreach ($abilities as $ability => $value) {
                         if ($value == $preferences->$ability && ($preferences->$ability > 0 ||
@@ -116,7 +118,7 @@ class OskaCronjob extends CronJob
                         }
                     }
                 }
-                
+
                 $max_prefsum = max($mentor_prefsums);
 
                 // pick only mentors that have the highest number of matching preferences/abilities
@@ -126,48 +128,42 @@ class OskaCronjob extends CronJob
                         return ($mentor_prefsums[$mentor->user_id] == $max_prefsum);
                     }
                 );
-                
+
                 if ($mentors_tmp) {
                     $mentors = $mentors_tmp;
                 }
             }
-            
+
             if ($mentors) {
-            
                 // pick mentors with smallest number of mentees
                 if (count($mentors) > 1) {
-                    
                     $mentors_tmp = [];
                     foreach($mentors as $mentor) {
                         $mentors_tmp[$mentor->user_id] = $mentor->mentee_counter;
                     }
-                    
                     $min_mentee_count = min($mentors_tmp);
-                    
                     $mentors = array_filter(
                         $mentors,
                         function ($mentor) {
                             return $mentor->mentee_counter == $min_mentee_count;
                         }
                     );
-                    
                 }
-            
+
                 // randomly pick one mentor from list
                 $matched_mentor = $mentors[mt_rand(0, count($mentors) - 1)];
-                
+
                 OskaMatches::create(['mentor_id' => $matched_mentor->user_id, 
                                      'mentee_id' => $mentee->user_id]);
-                
+
                 // update mentee
                 $mentee->has_tutor = 1;
                 $mentee->store();
-                
+
                 // update mentor
                 $matched_mentor->mentee_counter++;
                 $matched_mentor->store();
             }
         }
     }
-
 }
