@@ -27,6 +27,8 @@ class MentoringController extends PluginController {
     public function index_action()
     {
         global $user;
+        
+        PageLayout::addStylesheet($this->plugin->getPluginURL() . '/css/oska.css');
 
         $this->title = _('Profil');
         Navigation::activateItem('/course/oska/mentor_profile');
@@ -84,7 +86,7 @@ class MentoringController extends PluginController {
             'children'          => Request::int('children'),
             'apprentice'        => Request::int('apprentice'),
             'lehramt_detail'    => $teacher_detail,
-            'studycourse'       => Request::option('studycourse')
+            'studycourse'       => Request::optionArray('studycourse')
         ];
         $mentor->abilities = json_encode($abilities);
 

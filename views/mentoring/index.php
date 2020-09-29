@@ -38,16 +38,16 @@
             <div class="hgroup">
                 <label>
                     <? if (count($studycourses) > 1): ?>
-                        <select name="studycourse">
+                        <select name="studycourse[]" class="oska-mentor-fach" multiple="multiple">
                             <? foreach($studycourses as $studycourse): ?>
                                 <option value="<?= $studycourse->fach_id ?>" 
-                                    <?= $mentor->studycourse == $studycourse->fach_id ? 'selected' : '' ?>>
+                                    <?= in_array($studycourse->fach_id, $mentor->studycourse) ? 'selected' : '' ?>>
                                     <?= htmlReady(_($studycourse->studycourse_name)) ?>
                                 </option>
                             <? endforeach ?>
                         </select>
                     <? else: ?>
-                    <input type="hidden" name="studycourse" value="<?= $studycourses[0]->fach_id ?>" />
+                    <input type="hidden" name="studycourse[]" value="<?= $studycourses[0]->fach_id ?>" />
                     <input type="text" name="studycoursename" value="<?= $studycourses[0]->studycourse_name ?>" disabled />
                     <? endif?>
                 </label>
@@ -186,5 +186,8 @@
             }
         });
         $('input[name="lehramt"]').trigger('change');
+    });
+    $(".oska-mentor-fach").select2({
+        width: '50%'
     });
 </script>

@@ -73,7 +73,7 @@ class OskaMentors extends SimpleORMap
     {
         $abilities = json_decode($this->abilities);
 
-        return $abilities->studycourse;
+        return is_array($abilities->studycourse) ? $abilities->studycourse : [$abilities->studycourse];
     }
 
     public function getMentorStudycourses()

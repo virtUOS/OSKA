@@ -69,7 +69,7 @@ class OskaCronjob extends CronJob
             $all_mentors = OskaMentors::findBySql("mentee_counter < ? ORDER BY mentee_counter", [$max_mentees]);
             $mentors = [];
             foreach ($all_mentors as $mentor) {
-                if($mentor->getMentorPrefStudycourse() == $mentee_studycourse) {
+                if(in_array($mentee_studycourse, $mentor->getMentorPrefStudycourse())) {
                     array_push($mentors, $mentor);
                 }
             }
