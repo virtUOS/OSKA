@@ -56,44 +56,50 @@ class MentoringController extends PluginController {
     {
         global $user;
 
-        $mentor = OskaMentors::find($user->user_id);
+        if (!Request::optionArray('studycourse')) {
+            PageLayout::postError(_('Ihre Daten wurden nicht gespeichert: Bitte wählen Sie mindestens ein Studienfach aus.'));
+            $this->redirect('mentoring/index');
+        } else {
 
-        if($mentor == null)  {
-            $mentor = new OskaMentors();
-            $mentor->user_id = $user->user_id;
-            $mentor->abilities =  json_encode(array());
-        }
+            $mentor = OskaMentors::find($user->user_id);
 
-        if(in_array(Request::option('lehramt'), ['0', '1'])) {
-            $mentor->teacher = Request::option('lehramt');
-            if (Request::option('lehramt') == '1') {
-                if(in_array(Request::option('lehramt_detail'), ['0', '1', '2'])) {
-                    $teacher_detail = Request::option('lehramt_detail');
+            if($mentor == null)  {
+                $mentor = new OskaMentors();
+                $mentor->user_id = $user->user_id;
+                $mentor->abilities =  json_encode(array());
+            }
+
+            if(in_array(Request::option('lehramt'), ['0', '1'])) {
+                $mentor->teacher = Request::option('lehramt');
+                if (Request::option('lehramt') == '1') {
+                    if(in_array(Request::option('lehramt_detail'), ['0', '1', '2'])) {
+                        $teacher_detail = Request::option('lehramt_detail');
+                    } else {
+                        $teacher_detail = '2';
+                    }
                 } else {
-                    $teacher_detail = '2';
+                    $teacher_detail = '-1';
                 }
             } else {
+                $mentor->teacher = 0;
                 $teacher_detail = '-1';
             }
-        } else {
-            $mentor->teacher = 0;
-            $teacher_detail = '-1';
+
+            $abilities = [
+                'migration'         => Request::int('migration'),
+                'firstgen'          => Request::int('firstgen'),
+                'children'          => Request::int('children'),
+                'apprentice'        => Request::int('apprentice'),
+                'lehramt_detail'    => $teacher_detail,
+                'studycourse'       => Request::optionArray('studycourse')
+            ];
+            $mentor->abilities = json_encode($abilities);
+
+            $mentor->description = \Studip\Markup::purifyHtml(Request::get('description'));
+
+            $mentor->store();
+            $this->redirect('mentoring/index');
         }
-
-        $abilities = [
-            'migration'         => Request::int('migration'),
-            'firstgen'          => Request::int('firstgen'),
-            'children'          => Request::int('children'),
-            'apprentice'        => Request::int('apprentice'),
-            'lehramt_detail'    => $teacher_detail,
-            'studycourse'       => Request::optionArray('studycourse')
-        ];
-        $mentor->abilities = json_encode($abilities);
-
-        $mentor->description = \Studip\Markup::purifyHtml(Request::get('description'));
-
-        $mentor->store();
-        $this->redirect('mentoring/index');
     }
 
     public function mentee_list_action()
