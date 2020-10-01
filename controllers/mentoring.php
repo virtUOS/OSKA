@@ -39,7 +39,9 @@ class MentoringController extends PluginController {
         $this->studycourses = new SimpleCollection(UserStudyCourse::findByUser($user->user_id));
 
         if($mentor == null) {
+            $this->mentor = new stdClass();
             $this->mentor->lehramt = 0;
+            $this->mentor->studycourse = [];
             $this->mentor->firstgen = 2;
             $this->mentor->children = 2;
             $this->mentor->apprentice = 2;
