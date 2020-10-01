@@ -145,10 +145,18 @@ class AdminController extends PluginController {
 
         foreach($oska_mentors as $mentor){
             $user = User::find($mentor['user_id']);
+            $abilities = json_decode($mentor['abilities']);
             $fach = '';
+            $fach_selected = '';
             $len = count($user->studycourses);
             foreach ($user->studycourses as $index => $val) {
                 $fach .= $val->studycourse->name;
+                if($fach_selected != '') {
+                    $fach_selected .= ', ';
+                }
+                if(in_array($val->studycourse->id, $abilities->studycourse)) {
+                    $fach_selected .= $val->studycourse->name;
+                }
                 if ($index != $len -1) {
                     $fach .= ', ';
                 }
@@ -156,9 +164,10 @@ class AdminController extends PluginController {
             array_push($this->mentors_usernames, $user->username);
             array_push($this->mentors, array(
                 'user' => $user, 
-                'abilities' => json_decode($mentor['abilities']), 
+                'abilities' => $abilities, 
                 'mentee_counter' => intval($mentor['mentee_counter']),
-                'fach' => $fach
+                'fach' => $fach,
+                'fach_selected' => $fach_selected
                 )
             );
         }
@@ -214,27 +223,42 @@ class AdminController extends PluginController {
         }
 
         $oska_mentors = OskaMentors::findBySQL('mentee_counter < ? ORDER BY mentee_counter', array('8'));
-        $this->mentors_alt = [];
+        $this->mentors_all = [];
+        $this->mentors_have_studycourse = [];
         $this->mentors = [];
 
         foreach($oska_mentors as $oska_mentor) {
             $mentor = new \stdClass();
             $mentor->user = User::find($oska_mentor->user_id);
-            $mentor->studycourses = '';
-            $len = count($mentor->user->studycourses);
-            $matching_studycourse = false;
-            foreach ($mentor->user->studycourses as $index => $val) {
-                if($val->fach_id == $this->mentee_preferences->studycourse){
-                    $matching_studycourse = true;
-                }
-                $mentor->studycourses .= $val->studycourse->name;
-                if ($index != $len -1) { $mentor->studycourses .= ', ';}
-            }
             $mentor->abilities = json_decode($oska_mentor->abilities);
             $mentor->teacher = $oska_mentor->teacher;
             $mentor->mentee_counter = $oska_mentor->mentee_counter;
+            $mentor->studycourses = '';
+            $mentor->studycourses_pref = '';
+            $len = count($mentor->user->studycourses);
+            $matching_studycourse = false;
+            $has_studycourse = false;
+            foreach ($mentor->user->studycourses as $index => $val) {
+                if($val->fach_id == $this->mentee_preferences->studycourse){
+                    $has_studycourse = true;
+                }
+                if(in_array($this->mentee_preferences->studycourse, $mentor->abilities->studycourse)){
+                    $matching_studycourse = true;
+                }
+                $mentor->studycourses .= $val->studycourse->name;
+                if(in_array($val->studycourse->id, $mentor->abilities->studycourse)) {
+                    if($mentor->studycourses_pref != '') {
+                        $mentor->studycourses_pref .= ', ';
+                    }
+                    $mentor->studycourses_pref .= $val->studycourse->name;
+                }
+                if ($index != $len -1) { $mentor->studycourses .= ', ';}
+            }
+            array_push($this->mentors_all, $mentor);
 
-            array_push($this->mentors_alt, $mentor);
+            if($has_studycourse){
+                array_push($this->mentors_have_studycourse, $mentor);
+            }
 
             if($matching_studycourse){
                 array_push($this->mentors, $mentor);
@@ -242,7 +266,14 @@ class AdminController extends PluginController {
         }
 
         if(count($this->mentors) == 0) {
-            $this->mentors = $this->mentors_alt;
+            $this->message_no_mentors_found = true;
+            if(count($this->mentors_have_studycourse) != 0) {
+                $this->mentors = $this->mentors_have_studycourse;
+                $this->message_show_studycourse_mentors = true;
+            } else {
+                $this->mentors = $this->mentors_all;
+                $this->message_show_all_mentors = true;
+            }
         }
 
         shuffle($this->mentors);

@@ -1,4 +1,13 @@
 <? $gender = array(_('egal'), _('männlich'), _('weiblich'), _('divers')); ?>
+<? if($message_no_mentors_found) {
+    echo MessageBox::error(_('Es wurden keine passenden Mentoren gefunden!'));
+} ?>
+<? if($message_show_studycourse_mentors) {
+    echo MessageBox::info(_('Es werden Mentoren mit passendem Studiengang angezeigt.'));
+} ?>
+<? if($message_show_all_mentors) {
+    echo MessageBox::info(_('Es wird eine Auswahl von Mentoren angezeigt.'));
+} ?>
 <form action="<?= $controller->link_for('admin/store_match');?>" class="default" method="post">
 <table class="default">
     <colgroup>
@@ -69,6 +78,7 @@
         <col width="60">
         <col>
         <col>
+        <col>
         <col width="80">
         <col width="80">
         <col width="80">
@@ -81,6 +91,7 @@
                 <th></th>
                 <th><?= _('OSKA')?></th>
                 <th><?= _('Fach')?></th>
+                <th><?= _('ausgewähltes Fach')?></th>
                 <th style="text-align: center"><?= _('Lehramt') ?></th>
                 <th style="text-align: center"><?= _('Geschlecht') ?></th>
                 <th style="text-align: center"><?= _('Migrationshintergrund') ?></th>
@@ -100,6 +111,9 @@
                     </td>
                     <td>
                         <?= htmlReady($mentor->studycourses); ?>
+                    </td>
+                    <td>
+                        <?= htmlReady($mentor->studycourses_pref); ?>
                     </td>
                     <td style="text-align: center">
                     <?= ($mentor->teacher == 1) ? Icon::create('accept', 'accept') :Icon::create('decline', 'attention')  ?>

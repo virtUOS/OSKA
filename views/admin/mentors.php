@@ -32,6 +32,7 @@
     <colgroup>
         <col width="600">
         <col>
+        <col>
         <col width="120">
         <col width="80">
     </colgroup>
@@ -39,6 +40,7 @@
             <tr>
                 <th><?= _('Nachname, Vorname') ?></th>
                 <th><?= _('Fach') ?></th>
+                <th><?= _('ausgewähltes Fach') ?></th>
                 <th style="text-align: center"><?= _('Anzahl Mentees') ?></th>
                 <th style="text-align: right"><?= _('Aktionen') ?></th>
             </tr>
@@ -48,6 +50,7 @@
             <tr>
                 <td><?= htmlReady($mentor['user']->nachname). ', ' . htmlReady($mentor['user']->vorname)?></td>
                 <td><?= htmlReady($mentor['fach']) ?></td>
+                <td><?= htmlReady($mentor['fach_selected']) ?></td>
                 <td style="text-align: center">
                     <?= htmlReady($mentor['mentee_counter']) ?>
                 </td>
