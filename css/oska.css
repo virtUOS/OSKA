@@ -167,3 +167,7 @@
 .oska-page-title {
     line-height: 1.25em;
 }
+
+.oska-mentor-fach {
+    transition: inherit !important;
+}
