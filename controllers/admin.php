@@ -285,6 +285,13 @@ class AdminController extends PluginController {
 
         shuffle($this->mentors);
         $this->mentors = array_slice($this->mentors, 0, 20);
+
+        $this->search = new SQLSearch(
+            "SELECT auth_user_md5.user_id, CONCAT(Nachname, ', ', Vorname, ' (',username, ')') ".
+            "FROM auth_user_md5 " .
+            "JOIN oska_mentors " .
+            "ON oska_mentors.user_id = auth_user_md5.user_id" 
+            , _("OSKA suchen"), "username");
     }
 
     public function store_match_action()

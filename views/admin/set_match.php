@@ -137,8 +137,22 @@
             <? endforeach; ?>
         </tbody>
 </table>
+<label>
+    <?= QuickSearch::get('mentor_id', $search)
+        ->withButton()
+        ->setInputStyle('width: 360px')
+        ->render();
+    ?>
+</label>
 <footer data-dialog-button>
     <button class="button accept"><?= _('speichern') ?></button>
 </footer>
 </form>
 
+<script>
+    $('document').ready(function(){
+        $("input[name='mentor_id_parameter']").focus(function(){
+            $("input[name='mentor_id']").prop('checked', false);
+        });
+    });
+</script>
