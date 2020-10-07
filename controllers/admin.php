@@ -91,6 +91,13 @@ class AdminController extends PluginController {
 
         $actions = $sidebar->addWidget(new ActionsWidget());
         $actions->addLink(
+            _('Mentee hinzufügen'),
+            $this->url_for('admin/add_mentee/'),
+            Icon::create('add', 'clickable'),
+            ['data-dialog' => 'size=auto']
+        );
+
+        $actions->addLink(
             _('Mentee-Liste exportieren'),
             $this->url_for('admin/export_mentees/'),
             Icon::create('export', 'clickable')
@@ -299,6 +306,57 @@ class AdminController extends PluginController {
         $this->redirect('admin/mentees');
     }
 
+    public function add_mentee_action()
+    {
+        $this->studycourses = StudyCourse::findBySQL("name != ''");
+    }
+
+    public function store_mentee_action()
+    {
+        global $perm;
+
+        $user_id = Request::get('user_id');
+        if ($user_id == '') {
+            PageLayout::postError(_('Es wurde kein Nutzer ausgewählt!'));
+        } else {
+            $user = User::find($user_id);
+            $mentee = OskaMentees::find($user_id);
+            if($mentee != null) {
+                PageLayout::postInfo($user->getFullname() . _(' ist bereits Mentee'));
+            } else {
+                $mentor = OskaMentors::find($user_id);
+                if($mentor != null) {
+                    PageLayout::postInfo($user->getFullname() . _(' ist bereits Mentor'));
+                } else {
+                    if(count($user->studycourses) == 0) {
+                        PageLayout::postError($user->getFullname() . _(' hat kein Studienfach'));
+                    } else {
+                        $studycourse = Request::option('studycourse');
+                        $preferences = [
+                            'studycourse'   => $studycourse,
+                            'gender'        => Request::int('gender'),
+                            'migration'     => Request::int('migration'),
+                            'firstgen'      => Request::int('firstgen'),
+                            'children'      => Request::int('children'),
+                            'apprentice'    => Request::int('apprentice')
+                        ];
+
+                        $data = [
+                            'user_id'       => $user->id,
+                            'teacher'       => Request::int('lehramt'),
+                            'has_tutor'     => 0,
+                            'preferences'   => json_encode($preferences)
+                        ];
+                        OskaMentees::register($data);
+                        PageLayout::postSuccess($user->getFullname() . _(' wurde als Mentee eingetragen'));
+                    }
+                }
+            }
+        }
+
+        $this->redirect('admin/mentees');
+    }
+
     public function export_mentees_action()
     {
         $data = [array(_('Vorname'), _('Nachname'), _('Studiengang'), _('hat OSKA'))];
@@ -325,7 +383,7 @@ class AdminController extends PluginController {
             ','
         );
     }
-    
+
     public function export_mentors_action($fach_selection = null, $mentee_count = null)
     {
         $data = [array(_('Vorname'), _('Nachname'), _('Studiengang'), _('Anzahl Mentees'))];
