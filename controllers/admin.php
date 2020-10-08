@@ -49,8 +49,11 @@ class AdminController extends PluginController {
         $this->matches = OskaMatches::findAllMaches();
     }
 
-    public function mentees_action($page = 1, $fach_selection = null)
+    public function mentees_action($page = 1, $fach_selection = null, $has_oska = null)
     {
+        $fach_selection = $fach_selection != 0 ? $fach_selection : null;
+        $has_oska = $has_oska != null ? intval($has_oska) : null;
+
         Navigation::activateItem('/course/oska/mentees');
         $this->title            = _('Mentees');
         $this->page             = (int) $page;
@@ -58,14 +61,16 @@ class AdminController extends PluginController {
         $this->entries_per_page = Config::get()->ENTRIES_PER_PAGE;
         $this->mentees          = [];
         $this->mentees_usernames = [];
-        $this->mentees_counter  = OskaMentees::countMentees($fach_selection);
+        $this->mentees_counter  = OskaMentees::countMentees($fach_selection, $has_oska);
         $this->fächer           = $this->getSubjects();
         $this->fach_filter      = $fach_selection;
+        $this->has_oska_filter  = $has_oska;
 
         $oska_mentees = OskaMentees::findAllMentees(
             ($this->page - 1) * $this->entries_per_page, // lower bound
             $this->entries_per_page, // elements per page
-            $fach_selection //fach filter
+            $fach_selection, //fach filter
+            $has_oska // mentee has a mentor
         );
 
         foreach($oska_mentees as $mentee){
@@ -200,10 +205,11 @@ class AdminController extends PluginController {
             );  
     }
 
-    public function fach_filter_action()
+    public function mentees_filter_action()
     {
-        $fach_id = Request::get('fach_filter');
-        $this->redirect('admin/mentees/1/'.$fach_id);
+        $fach_id = Request::get('fach_filter') ?: 0;
+        $has_oska = Request::get('has_oska_filter')!== '' ? Request::int('has_oska_filter') : null;
+        $this->redirect('admin/mentees/1/' . $fach_id . '/' . $has_oska);
     }
 
     public function fach_filter_mentor_action()

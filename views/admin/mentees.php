@@ -1,12 +1,23 @@
 <h1 class="oska-page-title"><?= htmlReady($title)?> (<?= htmlReady($mentees_counter)?>)</h1>
 
-<form action="<?= $controller->link_for('admin/fach_filter');?>" class="default" method="post">
-    <select name="fach_filter">
-    <option value="" <? if($fach_filter == null) {echo 'selected';}?>><?=_('kein Filter') ?></option>
-    <? foreach ($fächer as $fach): ?>
-    <option value="<?= $fach['fach_id'] ?>" <? if($fach_filter == $fach['fach_id']) {echo 'selected';}?>><?= htmlReady($fach['name']); ?></option>
-    <? endforeach; ?>
-    </select>
+<form action="<?= $controller->link_for('admin/mentees_filter');?>" class="default" method="post">
+    <label>
+        <?= _('Fach-Filter'); ?>
+        <select name="fach_filter">
+        <option value="" <? if($fach_filter === null) {echo 'selected';}?>><?=_('kein Filter') ?></option>
+        <? foreach ($fächer as $fach): ?>
+        <option value="<?= $fach['fach_id'] ?>" <? if($fach_filter === $fach['fach_id']) {echo 'selected';}?>><?= htmlReady($fach['name']); ?></option>
+        <? endforeach; ?>
+        </select>
+    </label>
+    <label>
+        <?= _('OSKA-Filter') ?>
+        <select name="has_oska_filter">
+            <option value="" <? if($has_oska_filter === null) {echo 'selected';}?>><?=_('kein Filter') ?></option>
+            <option value="1" <? if($has_oska_filter === 1) {echo 'selected';}?>><?=_('Mentee hat OSKA') ?></option>
+            <option value="0" <? if($has_oska_filter === 0) {echo 'selected';}?>><?=_('Mentee hat keinen OSKA') ?></option>
+        </select>
+    </label>
     <button type="submit" class="button"><?= _('Filter anwenden')?></button>
 </form>
 
