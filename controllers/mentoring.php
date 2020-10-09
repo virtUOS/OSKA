@@ -37,6 +37,7 @@ class MentoringController extends PluginController {
 
         $mentor = OskaMentors::find($user->user_id);
         $this->studycourses = new SimpleCollection(UserStudyCourse::findByUser($user->user_id));
+        $this->all_studycourses = StudyCourse::findBySQL("name != ''");
 
         if($mentor == null) {
             $this->mentor = new stdClass();

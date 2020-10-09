@@ -20,7 +20,7 @@
         <div>
             <label class="label_text"><?= _('Welches Fach soll der/die OSKA studieren?') ?><br>
             <? if (count($studycourses) > 1): ?>
-                <select name="studycourse" id="studycourse" multiple="multiple" required>
+                <select name="studycourse" id="studycourse" required>
                     <? foreach($studycourses as $studycourse): ?>
                         <option value="<?= $studycourse->fach_id ?>">
                             <?= htmlReady(_($studycourse->name)) ?>

@@ -10,10 +10,10 @@
             <?= _('Studiengang, in dem du als OSKA-Mentor*in tätig bist') ?><br>
             <? if (count($studycourses) > 1): ?>
                 <select name="studycourse[]" class="oska-mentor-fach" multiple="multiple" required>
-                    <? foreach($studycourses as $studycourse): ?>
+                    <? foreach($all_studycourses as $studycourse): ?>
                         <option value="<?= $studycourse->fach_id ?>" 
                             <?= in_array($studycourse->fach_id, $mentor->studycourse) ? 'selected' : '' ?>>
-                            <?= htmlReady(_($studycourse->studycourse_name)) ?>
+                            <?= htmlReady(_($studycourse->name)) ?>
                         </option>
                     <? endforeach ?>
                 </select>

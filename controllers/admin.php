@@ -341,8 +341,6 @@ class AdminController extends PluginController {
 
     public function store_mentee_action()
     {
-        global $perm;
-
         $user_id = Request::get('user_id');
         if ($user_id == '') {
             PageLayout::postError(_('Es wurde kein Nutzer ausgewählt!'));
