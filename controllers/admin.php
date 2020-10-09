@@ -257,11 +257,11 @@ class AdminController extends PluginController {
                 if($val->fach_id == $this->mentee_preferences->studycourse){
                     $has_studycourse = true;
                 }
-                if(in_array($this->mentee_preferences->studycourse, $mentor->abilities->studycourse)){
+                if(in_array($this->mentee_preferences->studycourse, (array)$mentor->abilities->studycourse)){
                     $matching_studycourse = true;
                 }
                 $mentor->studycourses .= $val->studycourse->name;
-                if(in_array($val->studycourse->id, $mentor->abilities->studycourse)) {
+                if(in_array($val->studycourse->id, (array)$mentor->abilities->studycourse)) {
                     if($mentor->studycourses_pref != '') {
                         $mentor->studycourses_pref .= ', ';
                     }
@@ -298,8 +298,11 @@ class AdminController extends PluginController {
             "SELECT auth_user_md5.user_id, CONCAT(Nachname, ', ', Vorname, ' (',username, ')') ".
             "FROM auth_user_md5 " .
             "JOIN oska_mentors " .
-            "ON oska_mentors.user_id = auth_user_md5.user_id" 
-            , _("OSKA suchen"), "username");
+            "ON oska_mentors.user_id = auth_user_md5.user_id " .
+            "WHERE (CONCAT(auth_user_md5.Vorname, \" \", auth_user_md5.Nachname) LIKE :input " .
+            "OR CONCAT(auth_user_md5.Nachname, \" \", auth_user_md5.Vorname) LIKE :input " .
+            "OR auth_user_md5.username LIKE :input) " .
+            "ORDER BY Vorname, Nachname", _("OSKA suchen"), "username");
     }
 
     public function store_match_action()
