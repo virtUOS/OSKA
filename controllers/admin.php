@@ -29,7 +29,7 @@ class AdminController extends PluginController {
         Navigation::activateItem('/course/oska/admin');
         $this->title = _('Übersicht');
         $this->issues = OskaMatches::getIssues();
-        $this->mentees_all = OskaMentees::countMentees(null);
+        $this->mentees_all = OskaMentees::countMentees();
         $this->mentees_without = sizeof(OskaMentees::findBySQL('has_tutor = 0', array()));
 
         if($this->mentees_all != 0) {
@@ -49,9 +49,9 @@ class AdminController extends PluginController {
         $this->matches = OskaMatches::findAllMaches();
     }
 
-    public function mentees_action($page = 1, $fach_selection = null, $has_oska = null)
+    public function mentees_action($page = 1, $fach_selection= null, $has_oska = null)
     {
-        $fach_selection = $fach_selection != 0 ? $fach_selection : null;
+        $fach_selection = $fach_selection !== '0' ? $fach_selection : null;
         $has_oska = $has_oska != null ? intval($has_oska) : null;
 
         Navigation::activateItem('/course/oska/mentees');
@@ -161,16 +161,18 @@ class AdminController extends PluginController {
             $fach = '';
             $fach_selected = '';
             $len = count($user->studycourses);
-            foreach ($user->studycourses as $index => $val) {
-                $fach .= $val->studycourse->name;
-                if($fach_selected != '') {
-                    $fach_selected .= ', ';
-                }
-                if(in_array($val->studycourse->id, $abilities->studycourse)) {
-                    $fach_selected .= $val->studycourse->name;
-                }
-                if ($index != $len -1) {
-                    $fach .= ', ';
+            if ($len > 0) {
+                foreach ($user->studycourses as $index => $val) {
+                    $fach .= $val->studycourse->name;
+                    if($fach_selected != '') {
+                        $fach_selected .= ', ';
+                    }
+                    if(in_array($val->studycourse->id, $abilities->studycourse)) {
+                        $fach_selected .= $val->studycourse->name;
+                    }
+                    if ($index != $len -1) {
+                        $fach .= ', ';
+                    }
                 }
             }
             array_push($this->mentors_usernames, $user->username);
@@ -303,18 +305,26 @@ class AdminController extends PluginController {
     public function store_match_action()
     {
         $mentee = OskaMentees::find(Request::get('mentee_id'));
-        $mentor = OskaMentors::find(Request::get('mentor_id'));
+        $mentor_id = Request::get('mentor_id');
+        if (Request::get('mentor_id_search') != '') {
+            $mentor_id = Request::get('mentor_id_search');
+        }
+        if ($mentor_id == '') {
+            PageLayout::postError(_('Es wurde kein OSKA ausgewählt'));
+        } else {
+            $mentor = OskaMentors::find($mentor_id);
 
-        $match = new OskaMatches();
-        $match->mentee_id = $mentee->user_id;
-        $match->mentor_id = $mentor->user_id;
-        $match->store();
-
-        $mentee->has_tutor = true;
-        $mentee->store();
-
-        $mentor->raiseCounter();
-        $mentor->store();
+            $match = new OskaMatches();
+            $match->mentee_id = $mentee->user_id;
+            $match->mentor_id = $mentor->user_id;
+            $match->store();
+    
+            $mentee->has_tutor = true;
+            $mentee->store();
+    
+            $mentor->raiseCounter();
+            $mentor->store();
+        }
 
         $this->redirect('admin/mentees');
     }

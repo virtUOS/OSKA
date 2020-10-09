@@ -107,7 +107,7 @@ class OskaMentees extends SimpleORMap
         }
     }
 
-    public function countMentees($fach_selection, $has_oska)
+    public function countMentees($fach_selection = null, $has_oska = null)
     {
         return count(self::findAllMentees(1, null, $fach_selection, $has_oska));
     }
@@ -123,16 +123,16 @@ class OskaMentees extends SimpleORMap
                 user_studiengang
             ON
                 oska_mentees.user_id = user_studiengang.user_id";
-        if($fach_id != null) {
+        if($fach_id !== null) {
             $sql .= " WHERE fach_id = '" . $fach_id . "'";
         }
-        if ($has_oska != null) {
+        if ($has_oska !== null) {
             $sql .= $fach_id != null ? " AND" : " WHERE";
-            $sql .= $has_oska ? " has_tutor = 1" : " has_tutor = 0";
+            $sql .=  " has_tutor = " . $has_oska;
         }
         
         $sql .= " GROUP BY oska_mentees.user_id";
-        
+
         if($elements_per_page != null){
             $sql .= " LIMIT ". $lower_bound. ', '. $elements_per_page;
         }

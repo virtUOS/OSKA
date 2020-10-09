@@ -138,7 +138,7 @@
         </tbody>
 </table>
 <label>
-    <?= QuickSearch::get('mentor_id', $search)
+    <?= QuickSearch::get('mentor_id_search', $search)
         ->withButton()
         ->setInputStyle('width: 360px')
         ->render();
@@ -151,7 +151,7 @@
 
 <script>
     $('document').ready(function(){
-        $("input[name='mentor_id_parameter']").focus(function(){
+        $("input[name='mentor_id_search_parameter']").focus(function(){
             $("input[name='mentor_id']").prop('checked', false);
         });
     });
