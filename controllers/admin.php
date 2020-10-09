@@ -51,6 +51,7 @@ class AdminController extends PluginController {
 
     public function mentees_action($page = 1, $fach_selection= null, $has_oska = null)
     {
+        $fach_filter = $fach_selection;
         $fach_selection = $fach_selection !== '0' ? $fach_selection : null;
         $has_oska = $has_oska != null ? intval($has_oska) : null;
 
@@ -63,7 +64,7 @@ class AdminController extends PluginController {
         $this->mentees_usernames = [];
         $this->mentees_counter  = OskaMentees::countMentees($fach_selection, $has_oska);
         $this->fächer           = $this->getSubjects();
-        $this->fach_filter      = $fach_selection;
+        $this->fach_filter      = $fach_filter;
         $this->has_oska_filter  = $has_oska;
 
         $oska_mentees = OskaMentees::findAllMentees(
@@ -126,7 +127,8 @@ class AdminController extends PluginController {
         PageLayout::addStylesheet($this->plugin->getPluginURL() . '/css/oska.css?v=42');
         PageLayout::addScript($this->plugin->getPluginURL() . '/js/oska.js');
 
-        $fach_selection = $fach_selection != 0 ? $fach_selection : null;
+        $fach_filter = $fach_selection;
+        $fach_selection = $fach_selection !== '0' ? $fach_selection : null;
         $mentee_count = $mentee_count != null ? intval($mentee_count) : null;
 
         Navigation::activateItem('/course/oska/mentors');
@@ -138,7 +140,7 @@ class AdminController extends PluginController {
         $this->mentors_usernames = [];
         $this->mentors_counter   = OskaMentors::countMentorsWithFilter($fach_selection, $mentee_count);
         $this->fächer            = $this->getSubjects('mentors');
-        $this->fach_filter       = $fach_selection;
+        $this->fach_filter       = $fach_filter;
         $this->mentee_count      = $mentee_count;
 
         $oska_mentors = OskaMentors::findAllMentors(
