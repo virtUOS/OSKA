@@ -166,15 +166,15 @@ class AdminController extends PluginController {
             if ($len > 0) {
                 foreach ($user->studycourses as $index => $val) {
                     $fach .= $val->studycourse->name;
-                    if($fach_selected != '') {
-                        $fach_selected .= ', ';
-                    }
-                    if(in_array($val->studycourse->id, $abilities->studycourse)) {
-                        $fach_selected .= $val->studycourse->name;
-                    }
                     if ($index != $len -1) {
                         $fach .= ', ';
                     }
+                }
+            }
+            foreach($abilities->studycourse as $i => $studycourse) {
+                $fach_selected .= Fach::find($studycourse)->name;
+                if ($i != count($abilities->studycourse) -1) {
+                    $fach_selected .= ', ';
                 }
             }
             array_push($this->mentors_usernames, $user->username);
@@ -385,20 +385,34 @@ class AdminController extends PluginController {
 
     public function export_mentees_action()
     {
-        $data = [array(_('Vorname'), _('Nachname'), _('Studiengang'), _('hat OSKA'))];
+        $data = [array(_('Vorname'), _('Nachname'), _('E-Mail'), _('Studiengang'), _('präferiertes Fach'), _('hat OSKA'))];
 
         foreach(OskaMentees::findAllMentees() as $mentee){
             $user = User::find($mentee['user_id']);
+            $preferences = json_decode($mentee['preferences']);
             $fach = '';
+            $pref_fach = '';
             $len = count($user->studycourses);
             foreach ($user->studycourses as $index => $val) {
                 $fach .= $val->studycourse->name;
                 if ($index != $len -1) {
-                    $fach .= ', ';
+                    $fach .= '; ';
+                }
+                if( $val->studycourse->id == $preferences->studycourse) {
+                    $pref_fach = $val->studycourse->name;
+                    if ($index != $len -1) {
+                        $pref_fach .= '; ';
+                    }
                 }
             }
-            $mentee_data = array($user->vorname, $user->nachname, $fach, 
-                'hat einen OSKA'    => boolval($mentee['has_tutor'])
+
+            $mentee_data = array(
+                $user->vorname,
+                $user->nachname,
+                $user->email,
+                $fach,
+                $pref_fach,
+                'hat einen OSKA' => $mentee['has_tutor']
             );
             array_push($data, $mentee_data);
         }
@@ -412,12 +426,14 @@ class AdminController extends PluginController {
 
     public function export_mentors_action($fach_selection = null, $mentee_count = null)
     {
-        $data = [array(_('Vorname'), _('Nachname'), _('Studiengang'), _('Anzahl Mentees'))];
+        $data = [array(_('Vorname'), _('Nachname'), _('E-Mail'), _('Studiengang'), _('präferiertes Fach'), _('Anzahl Mentees'))];
 
         foreach(OskaMentors::findAllMentors() as $mentor){
             if ($mentee_count == '' || $mentor['mentee_counter'] == $mentee_count) {
                 $user = User::find($mentor['user_id']);
+                $preferences = json_decode($mentor['abilities']);
                 $fach = '';
+                $pref_fach = '';
                 $len = count($user->studycourses);
                 foreach ($user->studycourses as $index => $val) {
                     if (!$fach_selection || $val->studycourse->id == $fach_selection) {
@@ -425,11 +441,17 @@ class AdminController extends PluginController {
                     }
                     $fach .= $val->studycourse->name;
                     if ($index != $len -1) {
-                        $fach .= ', ';
+                        $fach .= '; ';
+                    }
+                }
+                foreach($preferences->studycourse as $index => $studycourse) {
+                    $pref_fach .= Fach::find($studycourse)->name;
+                    if ($index != count($preferences->studycourse) -1) {
+                        $pref_fach .= '; ';
                     }
                 }
                 if ($fach_chosen) {
-                    $mentor_data = array($user->vorname, $user->nachname, $fach, intval($mentor['mentee_counter']));
+                    $mentor_data = array($user->vorname, $user->nachname, $user->email, $fach, $pref_fach, intval($mentor['mentee_counter']));
                     array_push($data, $mentor_data);
                 }
             }
