@@ -145,7 +145,7 @@
     ?>
 </label>
 <footer data-dialog-button>
-    <button class="button accept"><?= _('speichern') ?></button>
+    <?= Studip\Button::create(_('Speichern'))?>
 </footer>
 </form>
 

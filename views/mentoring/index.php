@@ -10,16 +10,18 @@
             <?= _('Studiengang, in dem du als OSKA-Mentor*in tätig bist') ?><br>
             <? if (count($studycourses) > 1): ?>
                 <select name="studycourse[]" class="oska-mentor-fach" multiple="multiple" required>
-                    <? foreach($all_studycourses as $studycourse): ?>
-                        <option value="<?= $studycourse->fach_id ?>" 
-                            <?= in_array($studycourse->fach_id, $mentor->studycourse) ? 'selected' : '' ?>>
-                            <?= htmlReady(_($studycourse->name)) ?>
-                        </option>
+                    <? foreach($studycourses as $studycourse): ?>
+                        <? if ($studycourse->countUser()): ?>
+                            <option value="<?= $studycourse->fach_id ?>" 
+                                <?= in_array($studycourse->fach_id, $mentor->studycourse) ? 'selected' : '' ?>>
+                                <?= htmlReady($studycourse->name) ?>
+                            </option>
+                        <? endif ?>
                     <? endforeach ?>
                 </select>
             <? else: ?>
                 <input type="hidden" name="studycourse[]" value="<?= $studycourses[0]->fach_id ?>" />
-                <input type="text" name="studycoursename" value="<?= $studycourses[0]->studycourse_name ?>" disabled />
+                <input type="text" name="studycoursename" value="<?= htmlReady($studycourses[0]->name) ?>" disabled />
             <? endif?>
         </label>
 

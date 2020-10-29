@@ -336,7 +336,7 @@ class AdminController extends PluginController {
 
     public function add_mentee_action()
     {
-        $this->studycourses = StudyCourse::findBySQL("name != ''");
+        $this->studycourses = StudyCourse::findBySQL("LENGTH(fach_id) != 32 ORDER BY name");
     }
 
     public function store_mentee_action()
