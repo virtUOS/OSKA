@@ -93,6 +93,20 @@ class OskaMentees extends SimpleORMap
         
         return $preferences->studycourse;
     }
+    
+    /**
+    * Returns all studycourses of the mentee.
+    */
+    public function getMenteeStudycourses()
+    {
+        $studycourses = new SimpleCollection(UserStudyCourse::findByUser($this->user_id));
+        $studycourse_data = [];
+        foreach ($studycourses as $studycourse) {
+            $studycourse_data[$studycourse->fach_id] = $studycourse->studycourse_name;
+        }
+
+        return $studycourse_data;
+    }
 
     /**
     * Returns the gender value preferred by the mentee if it is a valid number.

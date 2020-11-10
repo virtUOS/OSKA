@@ -79,4 +79,44 @@ class OskaMatches extends SimpleORMap
     {
         return self::findOneBySQL('mentee_id = ?', array($mentee_id));
     }
+    
+    public function countMatches($fach_selection = null)
+    {
+        return count(self::findAllMatches(1, null, $fach_selection));
+    }
+
+    public function findAllMatches($lower_bound = 1, $elements_per_page = null, $fach_id = null)
+    {
+    
+        $matches = [];
+        
+        $sql = "
+            SELECT 
+                *
+            FROM
+                oska_matches
+            JOIN
+                user_studiengang
+            ON
+                oska_matches.mentee_id = user_studiengang.user_id";
+        
+        if($fach_id !== null) {
+            $sql .= " WHERE fach_id = '" . $fach_id . "'";
+        }
+
+        if($elements_per_page != null){
+            $sql .= " LIMIT ". $lower_bound. ', '. $elements_per_page;
+        }
+        $statement = DBManager::get()->prepare($sql);
+        $statement->execute($parameters);
+        $oska_matches = $statement->fetchAll();
+
+        foreach ($oska_matches as $i => $match) {
+            array_push($matches, ['mentor' => User::find($match['mentor_id']), 'mentee' => User::find($match['mentee_id']), 
+                'mentor_studycourses' => OskaMentors::find($match['mentor_id'])->getMentorStudycourses(), 
+                'mentee_studycourses' => OskaMentees::find($match['mentee_id'])->getMenteeStudycourses()]);
+        }
+
+        return $matches;
+    }
 }

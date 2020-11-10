@@ -42,11 +42,38 @@ class AdminController extends PluginController {
         $this->pie_bg_colors = array('#28497c', '#7e92b0', '#d4dbe5', '#899ab9', '#b8c2d5', '#e7ebf1', '#536d96', '#a9b6cb', '#a1aec7', '#d0d7e3');
     }
 
-    public function matches_action()
+    public function matches_action($page = 1, $fach_selection = null)
     {
+    
+        $fach_filter = $fach_selection;
+        $fach_selection = $fach_selection !== '0' ? $fach_selection : null;
+        
         Navigation::activateItem('/course/oska/matches');
         $this->title = _('Matches');
-        $this->matches = OskaMatches::findAllMaches();
+        $this->fächer           = $this->getSubjects();
+        $this->fach_filter      = $fach_filter;
+        $this->entries_per_page = Config::get()->ENTRIES_PER_PAGE;
+        $this->matches_counter = OskaMatches::countMatches($fach_selection);
+        $this->page             = (int) $page;
+        
+        $matches = OskaMatches::findAllMatches(
+            ($this->page - 1) * $this->entries_per_page, // lower bound
+            $this->entries_per_page, // elements per page
+            $fach_selection);
+        
+        foreach ($matches as $index => &$match) {
+            $preferred_studycourse = OskaMentees::find($match['mentee']->user_id)->getMenteePrefStudycourse();
+            foreach ($match['mentee']->studycourses as $i => $val) {
+                if ($val->studycourse->fach_id == $preferred_studycourse) {
+                    $matches[$index]['matched_course'] = $val->studycourse->name;
+                }
+            }
+            
+            $match['mentee_studycourses'] = implode(', ', $match['mentee_studycourses']);
+            $match['mentor_studycourses'] = implode(', ', $match['mentor_studycourses']);
+        }
+        
+        $this->matches = $matches;
     }
 
     public function mentees_action($page = 1, $fach_selection= null, $has_oska = null)
@@ -221,6 +248,12 @@ class AdminController extends PluginController {
         $fach_id = Request::get('fach_filter') ?: 0;
         $mentee_count_filter = Request::get('mentee_count_filter') !== '' ? Request::int('mentee_count_filter') : null;
         $this->redirect('admin/mentors/1/'.$fach_id.'/'.$mentee_count_filter);
+    }
+    
+    public function matches_filter_action()
+    {
+        $fach_id = Request::get('fach_filter') ?: 0;
+        $this->redirect('admin/matches/1/' . $fach_id);
     }
 
     public function set_match_action()
