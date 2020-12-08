@@ -137,7 +137,7 @@ class OskaMentees extends SimpleORMap
                 user_studiengang
             ON
                 oska_mentees.user_id = user_studiengang.user_id";
-        if($fach_id !== null) {
+        if($fach_id != null) {
             $sql .= " WHERE fach_id = '" . $fach_id . "'";
         }
         if ($has_oska !== null) {

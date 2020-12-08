@@ -44,16 +44,15 @@ class AdminController extends PluginController {
 
     public function matches_action($page = 1, $fach_selection = null)
     {
-    
         $fach_filter = $fach_selection;
-        $fach_selection = $fach_selection !== '0' ? $fach_selection : null;
-        
+        $fach_selection = ($fach_selection !== '0') ? $fach_selection : null;
+
         Navigation::activateItem('/course/oska/matches');
-        $this->title = _('Matches');
+        $this->title            = _('Matches');
         $this->fächer           = $this->getSubjects();
         $this->fach_filter      = $fach_filter;
         $this->entries_per_page = Config::get()->ENTRIES_PER_PAGE;
-        $this->matches_counter = OskaMatches::countMatches($fach_selection);
+        $this->matches_counter  = OskaMatches::countMatches($fach_selection);
         $this->page             = (int) $page;
         
         $matches = OskaMatches::findAllMatches(
@@ -62,15 +61,29 @@ class AdminController extends PluginController {
             $fach_selection);
         
         foreach ($matches as $index => &$match) {
-            $preferred_studycourse = OskaMentees::find($match['mentee']->user_id)->getMenteePrefStudycourse();
+            
+            $match['mentee'] = User::find($match['mentee_id']);
+            $match['mentor'] = User::find($match['mentor_id']);
+            
+            $mentee = OskaMentees::find($match['mentee_id']);
+            $mentor = OskaMentors::find($match['mentor_id']);
+        
+            $preferred_studycourse = $mentee->getMenteePrefStudycourse();
+            
+            if ($fach_selection && $preferred_studycourse != $fach_selection) {
+                unset($matches[$index]);
+                $this->matches_counter--;
+                continue;
+            }
+
             foreach ($match['mentee']->studycourses as $i => $val) {
                 if ($val->studycourse->fach_id == $preferred_studycourse) {
                     $matches[$index]['matched_course'] = $val->studycourse->name;
                 }
             }
             
-            $match['mentee_studycourses'] = implode(', ', $match['mentee_studycourses']);
-            $match['mentor_studycourses'] = implode(', ', $match['mentor_studycourses']);
+            $match['mentee_studycourses'] = implode(', ', $mentee->getMenteeStudycourses());
+            $match['mentor_studycourses'] = implode(', ', $mentor->getMentorStudycourses());
         }
         
         $this->matches = $matches;

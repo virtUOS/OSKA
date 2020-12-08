@@ -100,22 +100,18 @@ class OskaMatches extends SimpleORMap
             ON
                 oska_matches.mentee_id = user_studiengang.user_id";
         
-        if($fach_id !== null) {
+        if($fach_id != null) {
             $sql .= " WHERE fach_id = '" . $fach_id . "'";
         }
+        
+        $sql .= " GROUP BY oska_matches.mentee_id";
 
         if($elements_per_page != null){
             $sql .= " LIMIT ". $lower_bound. ', '. $elements_per_page;
         }
         $statement = DBManager::get()->prepare($sql);
         $statement->execute($parameters);
-        $oska_matches = $statement->fetchAll();
-
-        foreach ($oska_matches as $i => $match) {
-            array_push($matches, ['mentor' => User::find($match['mentor_id']), 'mentee' => User::find($match['mentee_id']), 
-                'mentor_studycourses' => OskaMentors::find($match['mentor_id'])->getMentorStudycourses(), 
-                'mentee_studycourses' => OskaMentees::find($match['mentee_id'])->getMenteeStudycourses()]);
-        }
+        $matches = $statement->fetchAll();
 
         return $matches;
     }

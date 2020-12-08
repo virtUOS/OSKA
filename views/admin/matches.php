@@ -66,4 +66,16 @@
                 </td>
             </tr>
         <? endforeach; ?>
+        <tfoot>
+            <tr>
+                <td colspan="4" class="actions">
+                    <?= $GLOBALS['template_factory']->render('shared/pagechooser', [
+                            'perPage'      => $entries_per_page,
+                            'num_postings' => $matches_counter,
+                            'page'         => $page,
+                            'pagelink'     => "plugins.php/OSKA/admin/matches/%s/" . $fach_filter . "/",
+                        ]) ?>
+                </td>
+            </tr>
+        </tfoot>
 </table>
