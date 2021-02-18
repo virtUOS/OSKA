@@ -129,8 +129,8 @@ class OskaMentees extends SimpleORMap
     public function findAllMentees($lower_bound = 1, $elements_per_page = null, $fach_id = null, $has_oska = null)
     {
         $sql = "
-            SELECT 
-                *
+            SELECT DISTINCT
+                oska_mentees.*, user_studiengang.semester, user_studiengang.abschluss_id
             FROM
                 oska_mentees
             JOIN
@@ -144,8 +144,6 @@ class OskaMentees extends SimpleORMap
             $sql .= $fach_id != null ? " AND" : " WHERE";
             $sql .=  " has_tutor = " . $has_oska;
         }
-        
-        $sql .= " GROUP BY oska_mentees.user_id";
 
         if($elements_per_page != null){
             $sql .= " LIMIT ". $lower_bound. ', '. $elements_per_page;
