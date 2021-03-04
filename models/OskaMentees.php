@@ -133,7 +133,7 @@ class OskaMentees extends SimpleORMap
                 oska_mentees.*, user_studiengang.semester, user_studiengang.abschluss_id
             FROM
                 oska_mentees
-            JOIN
+            LEFT JOIN
                 user_studiengang
             ON
                 oska_mentees.user_id = user_studiengang.user_id";
