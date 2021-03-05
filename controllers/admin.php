@@ -431,7 +431,7 @@ class AdminController extends PluginController {
 
     public function export_mentees_action()
     {
-        $data = [array(_('Vorname'), _('Nachname'), _('E-Mail'), _('Studiengang'), _('präferiertes Fach'), _('hat OSKA'))];
+        $data = [array(_('Vorname'), _('Nachname'), _('Benutzername'), _('E-Mail'), _('Studiengang'), _('präferiertes Fach'), _('hat OSKA'))];
 
         foreach(OskaMentees::findAllMentees() as $mentee){
             $user = User::find($mentee['user_id']);
@@ -455,6 +455,7 @@ class AdminController extends PluginController {
             $mentee_data = array(
                 $user->vorname,
                 $user->nachname,
+                $user->username,
                 $user->email,
                 $fach,
                 $pref_fach,
@@ -465,7 +466,7 @@ class AdminController extends PluginController {
 
         $this->render_csv(
             $data,
-            'Mentees',
+            'Mentees.csv',
             ','
         );
     }
