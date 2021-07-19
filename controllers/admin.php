@@ -466,14 +466,13 @@ class AdminController extends PluginController {
 
         $this->render_csv(
             $data,
-            'Mentees.csv',
-            ','
+            'Mentees.csv'
         );
     }
 
     public function export_mentors_action($fach_selection = null, $mentee_count = null)
     {
-        $data = [array(_('Vorname'), _('Nachname'), _('E-Mail'), _('Studiengang'), _('präferiertes Fach'), _('Anzahl Mentees'))];
+        $data = [array(_('Vorname'), _('Nachname'), _('Benutzername'), _('E-Mail'), _('Studiengang'), _('präferiertes Fach'), _('Anzahl Mentees'))];
 
         foreach(OskaMentors::findAllMentors() as $mentor){
             if ($mentee_count == '' || $mentor['mentee_counter'] == $mentee_count) {
@@ -498,7 +497,15 @@ class AdminController extends PluginController {
                     }
                 }
                 if ($fach_chosen) {
-                    $mentor_data = array($user->vorname, $user->nachname, $user->email, $fach, $pref_fach, intval($mentor['mentee_counter']));
+                    $mentor_data = array(
+                        $user->vorname, 
+                        $user->nachname,
+                        $user->username, 
+                        $user->email, 
+                        $fach, 
+                        $pref_fach, 
+                        intval($mentor['mentee_counter'])
+                    );
                     array_push($data, $mentor_data);
                 }
             }
@@ -506,8 +513,7 @@ class AdminController extends PluginController {
 
         $this->render_csv(
             $data,
-            'Mentors',
-            ','
+            'Mentors.csv'
         );
     }
 
