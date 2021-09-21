@@ -13,7 +13,7 @@
  **/
 
 class AdminController extends PluginController {
-    
+
     function before_filter(&$action, &$args)
     {
         global $perm;
@@ -54,22 +54,22 @@ class AdminController extends PluginController {
         $this->entries_per_page = Config::get()->ENTRIES_PER_PAGE;
         $this->matches_counter  = OskaMatches::countMatches($fach_selection);
         $this->page             = (int) $page;
-        
+
         $matches = OskaMatches::findAllMatches(
             ($this->page - 1) * $this->entries_per_page, // lower bound
             $this->entries_per_page, // elements per page
             $fach_selection);
-        
+
         foreach ($matches as $index => &$match) {
-            
+
             $match['mentee'] = User::find($match['mentee_id']);
             $match['mentor'] = User::find($match['mentor_id']);
-            
+
             $mentee = OskaMentees::find($match['mentee_id']);
             $mentor = OskaMentors::find($match['mentor_id']);
-        
+
             $preferred_studycourse = $mentee->getMenteePrefStudycourse();
-            
+
             if ($fach_selection && $preferred_studycourse != $fach_selection) {
                 unset($matches[$index]);
                 $this->matches_counter--;
@@ -81,11 +81,11 @@ class AdminController extends PluginController {
                     $matches[$index]['matched_course'] = $val->studycourse->name;
                 }
             }
-            
+
             $match['mentee_studycourses'] = implode(', ', $mentee->getMenteeStudycourses());
             $match['mentor_studycourses'] = implode(', ', $mentor->getMentorStudycourses());
         }
-        
+
         $this->matches = $matches;
     }
 
@@ -159,9 +159,9 @@ class AdminController extends PluginController {
 
             Icon::create('mail', 'clickable'),
             ['data-dialog' => '']
-            );  
+            );
     }
-    
+
     public function mentors_action($page = 1, $fach_selection = null, $mentee_count = null)
     {
         PageLayout::addStylesheet($this->plugin->getPluginURL() . '/css/oska.css?v=42');
@@ -262,7 +262,7 @@ class AdminController extends PluginController {
         $mentee_count_filter = Request::get('mentee_count_filter') !== '' ? Request::int('mentee_count_filter') : null;
         $this->redirect('admin/mentors/1/'.$fach_id.'/'.$mentee_count_filter);
     }
-    
+
     public function matches_filter_action()
     {
         $fach_id = Request::get('fach_filter') ?: 0;
@@ -369,10 +369,10 @@ class AdminController extends PluginController {
             $match->mentee_id = $mentee->user_id;
             $match->mentor_id = $mentor->user_id;
             $match->store();
-    
+
             $mentee->has_tutor = true;
             $mentee->store();
-    
+
             $mentor->raiseCounter();
             $mentor->store();
         }
@@ -557,11 +557,11 @@ class AdminController extends PluginController {
             $role_table = 'oska_mentees';
         }
 
-        $sql = "SELECT DISTINCT fach.fach_id, fach.name FROM $role_table JOIN user_studiengang " . 
-               "on $role_table.user_id = user_studiengang.user_id JOIN fach " . 
-               "on user_studiengang.fach_id = fach.fach_id join abschluss " . 
+        $sql = "SELECT DISTINCT fach.fach_id, fach.name FROM $role_table JOIN user_studiengang " .
+               "on $role_table.user_id = user_studiengang.user_id JOIN fach " .
+               "on user_studiengang.fach_id = fach.fach_id join abschluss " .
                "on user_studiengang.abschluss_id = abschluss.abschluss_id " .
-               "WHERE abschluss.name LIKE '%bachelor%'";
+               "WHERE abschluss.abschluss_id IN ('08','12','14','61','62','65','91')";
 
         $statement = DBManager::get()->prepare($sql);
         $statement->execute($parameters);
