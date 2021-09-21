@@ -561,7 +561,8 @@ class AdminController extends PluginController {
                "on $role_table.user_id = user_studiengang.user_id JOIN fach " .
                "on user_studiengang.fach_id = fach.fach_id join abschluss " .
                "on user_studiengang.abschluss_id = abschluss.abschluss_id " .
-               "WHERE abschluss.abschluss_id IN ('08','12','14','61','62','65','91')";
+               "WHERE abschluss.abschluss_id IN ('08','12','14','61','62','65','91')" .
+               "ORDER BY fach.name ASC";
 
         $statement = DBManager::get()->prepare($sql);
         $statement->execute($parameters);
