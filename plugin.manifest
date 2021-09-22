@@ -1,9 +1,9 @@
 pluginclassname=OSKA
 pluginname=OSKA
 origin=virtUOS
-version=1.0.10
+version=1.0.11
 studipMinVersion=4.0
-studipMaxVersion=4.6.99
+studipMaxVersion=5.0.99
 category=Kommunikation und Zusammenarbeit
 displayname=Mentoringprogramm OSKA
 summary=Mentoringprogramm für Erstsemester
