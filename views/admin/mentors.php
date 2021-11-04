@@ -52,7 +52,13 @@
                 <td><?= htmlReady($mentor['fach']) ?></td>
                 <td><?= htmlReady($mentor['fach_selected']) ?></td>
                 <td style="text-align: center">
-                    <?= htmlReady($mentor['mentee_counter']) ?>
+                    <? if ($mentor['mentee_counter'] > 0) : ?>
+                        <a href="<?= $controller->url_for('admin/mentors_mentees/' . $mentor['user']->id . '/' . $mentor['user']->nachname . '/' . $mentor['user']->vorname . '/' . $mentor['fach']) ?>">
+                            <?= htmlReady($mentor['mentee_counter']) ?>
+                        </a>
+                    <? else: ?>
+                        <?= htmlReady($mentor['mentee_counter']) ?>
+                    <? endif; ?>
                 </td>
                 <td class="actions">
                     <? $actionMenu = ActionMenu::get() ?>
