@@ -59,7 +59,7 @@
                 <td><?= htmlReady($mentor['fach_selected']) ?></td>
                 <td style="text-align: center">
                     <? if ($mentor['mentee_counter'] > 0) : ?>
-                        <a href="<?= $controller->url_for('admin/mentors_mentees/' . $mentor['user']->id . '/' . $mentor['user']->nachname . '/' . $mentor['user']->vorname . '/' . $mentor['fach']) ?>">
+                        <a href="<?= $controller->url_for('admin/mentors_mentees/' . $mentor['user']->id) ?>">
                             <?= htmlReady($mentor['mentee_counter']) ?>
                         </a>
                     <? else: ?>

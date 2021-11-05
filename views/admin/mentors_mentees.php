@@ -1,4 +1,4 @@
-<h1 class="oska-page-title"><?= htmlReady($title) ?> (<?= htmlReady($subject) ?>)</h1>
+<h1 class="oska-page-title"><?= htmlReady($title) ?></h1>
 <h3><?=_('Mentees:')?></h3>
 
 <table class="sortable-table default">

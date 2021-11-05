@@ -267,11 +267,11 @@ class AdminController extends PluginController {
             );  
     }
 
-    public function mentors_mentees_action($mentor_id, $lastname, $firstname, $subject)
+    public function mentors_mentees_action($mentor_id)
     {
         Navigation::activateItem('/course/oska/mentors');
-        $this->title = $lastname . ", " . $firstname;
-        $this->subject = $subject;
+        $mentor = User::find($mentor_id);
+        $this->title = $mentor->nachname . ", " . $mentor->vorname;
         $this->mentees = OskaMatches::getMentees($mentor_id);
     }
 
