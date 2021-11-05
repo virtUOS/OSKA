@@ -2,6 +2,12 @@
 
 <form action="<?= $controller->link_for('admin/mentees_filter');?>" class="default" method="post">
     <label>
+        <?= _('Namenssuche'); ?>
+        <div>
+            <input name="search_term" placeholder="<?=_('Suchbegriff')?>" value="<?= $search_term ? htmlReady($search_term) : '' ?>"/>
+        </div>
+    </label>
+    <label>
         <?= _('Fach-Filter'); ?>
         <select name="fach_filter">
         <option value="" <? if($fach_filter === null) {echo 'selected';}?>><?=_('kein Filter') ?></option>

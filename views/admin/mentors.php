@@ -1,6 +1,12 @@
 <h1 class="oska-page-title"><?= htmlReady($title) ?> (<?= htmlReady($mentors_counter) ?>)</h1>
 
 <form action="<?= $controller->link_for('admin/fach_filter_mentor');?>" class="default" method="post">
+    <label>
+        <?= _('Namenssuche'); ?>
+        <div>
+            <input name="search_term" placeholder="<?=_('Suchbegriff')?>" value="<?= $search_term ? htmlReady($search_term) : '' ?>"/>
+        </div>
+    </label>
     <section class="col-2">
         <span class="label-text"><?= _('Studienfach') ?></span>
         <label>
