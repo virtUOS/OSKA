@@ -121,7 +121,7 @@ class OskaMentees extends SimpleORMap
         }
     }
 
-    public function countMentees($search_term, $fach_selection = null, $has_oska = null)
+    public function countMentees($search_term = null, $fach_selection = null, $has_oska = null)
     {
         return count(self::findAllMentees(1, null, $search_term, $fach_selection, $has_oska));
     }
