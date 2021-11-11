@@ -121,28 +121,36 @@ class OskaMentees extends SimpleORMap
         }
     }
 
-    public function countMentees($fach_selection = null, $has_oska = null)
+    public function countMentees($search_term, $fach_selection = null, $has_oska = null)
     {
-        return count(self::findAllMentees(1, null, $fach_selection, $has_oska));
+        return count(self::findAllMentees(1, null, $search_term, $fach_selection, $has_oska));
     }
 
-    public function findAllMentees($lower_bound = 1, $elements_per_page = null, $fach_id = null, $has_oska = null)
+    public function findAllMentees($lower_bound = 1, $elements_per_page = null, $search_term = null, $fach_id = null, $has_oska = null)
     {
         $sql = "
             SELECT DISTINCT
-                oska_mentees.*, user_studiengang.semester, user_studiengang.abschluss_id
+                oska_mentees.*, user_studiengang.semester, user_studiengang.abschluss_id, auth_user_md5.username, auth_user_md5.Vorname as vorname, auth_user_md5.Nachname as nachname, auth_user_md5.Email as email
             FROM
                 oska_mentees
             LEFT JOIN
                 user_studiengang
             ON
-                oska_mentees.user_id = user_studiengang.user_id";
+                oska_mentees.user_id = user_studiengang.user_id
+            JOIN
+                auth_user_md5
+            ON
+                oska_mentees.user_id = auth_user_md5.user_id";
         if($fach_id != null) {
             $sql .= " WHERE fach_id = '" . $fach_id . "'";
         }
-        if ($has_oska !== null) {
+        if($has_oska !== null) {
             $sql .= $fach_id != null ? " AND" : " WHERE";
             $sql .=  " has_tutor = " . $has_oska;
+        }
+        if($search_term != null) {
+            $sql .= $fach_id != null || $has_oska !== null ? " AND" : " WHERE";
+            $sql .= " (nachname LIKE '%" . $search_term . "%' OR vorname LIKE '%" . $search_term . "%') ORDER BY nachname";
         }
 
         if($elements_per_page != null){

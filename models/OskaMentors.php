@@ -121,32 +121,37 @@ class OskaMentors extends SimpleORMap
         return $counters;
     }
 
-    public function countMentorsWithFilter($fach_selection, $mentee_counter)
+    public function countMentorsWithFilter($search_term, $fach_selection, $mentee_counter)
     {
-        return count(self::findAllMentors(1, null, $fach_selection, $mentee_counter));
+        return count(self::findAllMentors(1, null, $search_term, $fach_selection, $mentee_counter));
     }
 
-    public function findAllMentors($lower_bound = 1, $elements_per_page = null, $fach_id = null, $mentee_counter = null)
+    public function findAllMentors($lower_bound = 1, $elements_per_page = null, $search_term = null, $fach_id = null, $mentee_counter = null)
     {
         $sql = "
             SELECT 
-                *
+                oska_mentors.*, auth_user_md5.user_id, auth_user_md5.Vorname as vorname, auth_user_md5.Nachname as nachname
             FROM
                 oska_mentors
             JOIN
                 user_studiengang
             ON
-                oska_mentors.user_id = user_studiengang.user_id";
+                oska_mentors.user_id = user_studiengang.user_id
+            JOIN
+                auth_user_md5
+            ON
+                oska_mentors.user_id = auth_user_md5.user_id";
         if($fach_id != null) {
             $sql .= " WHERE fach_id = '" . $fach_id . "'";
         }
-
         if ($mentee_counter != null) {
             $sql .= $fach_id != null ? " AND" : " WHERE";
             $sql .= " mentee_counter = $mentee_counter";
         }
-
-        $sql .= " GROUP BY oska_mentors.user_id";
+        if($search_term != null) {
+            $sql .= $fach_id != null || $mentee_counter != null ? " AND" : " WHERE";
+            $sql .= " (nachname LIKE '%" . $search_term . "%' OR vorname LIKE '%" . $search_term . "%') ORDER BY nachname";
+        }
         
         if($elements_per_page != null){
             $sql .= " LIMIT ". $lower_bound. ', '. $elements_per_page;

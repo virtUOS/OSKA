@@ -103,25 +103,22 @@ class AdminController extends PluginController {
         $this->entries_per_page = Config::get()->ENTRIES_PER_PAGE;
         $this->mentees          = [];
         $this->mentees_usernames = [];
-        $this->mentees_counter  = OskaMentees::countMentees($fach_selection, $has_oska);
+        $this->mentees_counter  = OskaMentees::countMentees($search_term, $fach_selection, $has_oska);
         $this->fächer           = $this->getSubjects();
         $this->fach_filter      = $fach_filter;
         $this->has_oska_filter  = $has_oska;
         $this->search_term      = $search_term;
 
         $oska_mentees = OskaMentees::findAllMentees(
-            ($this->page - 1) * $this->entries_per_page, // lower bound
-            $this->entries_per_page, // elements per page
-            $fach_selection, //fach filter
-            $has_oska // mentee has a mentor
+            ($this->page - 1) * $this->entries_per_page,
+            $this->entries_per_page,
+            $search_term,
+            $fach_selection,
+            $has_oska
         );
 
         foreach($oska_mentees as $mentee) {
-            if($search_term) {
-                $user = User::findOneBySQL("user_id = '" . $mentee['user_id'] . "' AND (nachname LIKE '%" . $search_term . "%' OR vorname LIKE '%" . $search_term . "%') ORDER BY nachname");
-            } else {
-                $user = User::find($mentee['user_id']);
-            }
+            $user = User::find($mentee['user_id']);
 
             if($user) {
                 $fach = '';
@@ -188,16 +185,17 @@ class AdminController extends PluginController {
         $this->entries_per_page  = Config::get()->ENTRIES_PER_PAGE;
         $this->mentors           = [];
         $this->mentors_usernames = [];
-        $this->mentors_counter   = OskaMentors::countMentorsWithFilter($fach_selection, $mentee_count);
+        $this->mentors_counter   = OskaMentors::countMentorsWithFilter($search_term, $fach_selection, $mentee_count);
         $this->fächer            = $this->getSubjects('mentors');
         $this->fach_filter       = $fach_filter;
         $this->mentee_count      = $mentee_count;
         $this->search_term       = $search_term;
 
         $oska_mentors = OskaMentors::findAllMentors(
-            ($this->page - 1) * $this->entries_per_page, // lower bound
-            $this->entries_per_page, // elements per page
-            $fach_selection //fach filter
+            ($this->page - 1) * $this->entries_per_page,
+            $this->entries_per_page,
+            $search_term,
+            $fach_selection
         );
 
         if (isset($this->mentee_count)) {
