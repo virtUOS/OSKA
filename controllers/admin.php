@@ -89,12 +89,12 @@ class AdminController extends PluginController {
         $this->matches = $matches;
     }
 
-    public function mentees_action($page = 1, $fach_selection= null, $search_term = null, $has_oska = null)
+    public function mentees_action($page = 1, $fach_selection= null, $has_oska = null)
     {
         $fach_filter = $fach_selection;
         $fach_selection = $fach_selection !== '0' ? $fach_selection : null;
         $has_oska = $has_oska == '' ? null : intval($has_oska);
-        $search_term = ($search_term == 'null' || $search_term == null) ? '' : $search_term;
+        $search_term = Request::get('searchterm') ?: '';
 
         Navigation::activateItem('/course/oska/mentees');
         $this->title            = _('Mentees');
@@ -168,7 +168,7 @@ class AdminController extends PluginController {
             );
     }
 
-    public function mentors_action($page = 1, $fach_selection = null, $search_term = null ,$mentee_count = null)
+    public function mentors_action($page = 1, $fach_selection = null ,$mentee_count = null)
     {
         PageLayout::addStylesheet($this->plugin->getPluginURL() . '/css/oska.css?v=42');
         PageLayout::addScript($this->plugin->getPluginURL() . '/js/oska.js');
@@ -176,7 +176,7 @@ class AdminController extends PluginController {
         $fach_filter = $fach_selection;
         $fach_selection = $fach_selection !== '0' ? $fach_selection : null;
         $mentee_count = $mentee_count != null ? intval($mentee_count) : null;
-        $search_term = ($search_term == 'null' || $search_term == null) ? '' : $search_term;
+        $search_term = Request::get('searchterm') ?: '';
 
         Navigation::activateItem('/course/oska/mentors');
         $this->title             = _('Mentoren');
@@ -275,18 +275,24 @@ class AdminController extends PluginController {
 
     public function mentees_filter_action()
     {
-        $search_term = Request::get('search_term') ?: 'null';
+        $search_term = Request::get('search_term') ?: null;
         $fach_id = Request::get('fach_filter') ?: 0;
         $has_oska = Request::get('has_oska_filter') == '' ? null : Request::int('has_oska_filter');
-        $this->redirect('admin/mentees/1/' . $fach_id . '/' . $search_term . '/' . $has_oska);
+        $this->redirect(URLHelper::getURL('plugins.php/OSKA/admin/mentees/1/'
+                                            . $fach_id . '/'
+                                            . $has_oska
+                                            . ($search_term ? '?searchterm=' . $search_term : '')));
     }
 
     public function fach_filter_mentor_action()
     {
-        $search_term = Request::get('search_term') ?: 'null';
+        $search_term = Request::get('search_term') ?: null;
         $fach_id = Request::get('fach_filter') ?: 0;
         $mentee_count_filter = Request::get('mentee_count_filter') !== '' ? Request::int('mentee_count_filter') : null;
-        $this->redirect('admin/mentors/1/' . $fach_id . '/' . $search_term . '/' . $mentee_count_filter);
+        $this->redirect(URLHelper::getURL('plugins.php/OSKA/admin/mentors/1/'
+                                            . $fach_id . '/'
+                                            . $mentee_count_filter
+                                            . ($search_term ? '?searchterm=' . $search_term : '')));
     }
 
     public function matches_filter_action()
