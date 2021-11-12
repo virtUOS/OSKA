@@ -150,8 +150,9 @@ class OskaMentees extends SimpleORMap
         }
         if($search_term != null) {
             $sql .= $fach_id != null || $has_oska !== null ? " AND" : " WHERE";
-            $sql .= " (nachname LIKE '%" . $search_term . "%' OR vorname LIKE '%" . $search_term . "%') ORDER BY nachname";
+            $sql .= " (nachname LIKE '%" . $search_term . "%' OR vorname LIKE '%" . $search_term . "%')";
         }
+        $sql .= " ORDER BY nachname";
 
         if($elements_per_page != null){
             $sql .= " LIMIT ". $lower_bound. ', '. $elements_per_page;

@@ -129,7 +129,7 @@ class OskaMentors extends SimpleORMap
     public function findAllMentors($lower_bound = 1, $elements_per_page = null, $search_term = null, $fach_id = null, $mentee_counter = null)
     {
         $sql = "
-            SELECT 
+            SELECT DISTINCT
                 oska_mentors.*, auth_user_md5.user_id, auth_user_md5.Vorname as vorname, auth_user_md5.Nachname as nachname
             FROM
                 oska_mentors
@@ -150,9 +150,10 @@ class OskaMentors extends SimpleORMap
         }
         if($search_term != null) {
             $sql .= $fach_id != null || $mentee_counter != null ? " AND" : " WHERE";
-            $sql .= " (nachname LIKE '%" . $search_term . "%' OR vorname LIKE '%" . $search_term . "%') ORDER BY nachname";
+            $sql .= " (nachname LIKE '%" . $search_term . "%' OR vorname LIKE '%" . $search_term . "%')";
         }
-        
+        $sql .= " ORDER BY nachname";
+
         if($elements_per_page != null){
             $sql .= " LIMIT ". $lower_bound. ', '. $elements_per_page;
         }
