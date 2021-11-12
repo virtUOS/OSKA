@@ -90,7 +90,7 @@
                         'perPage'      => $entries_per_page,
                         'num_postings' => $mentees_counter,
                         'page'         => $page,
-                        'pagelink'     => "plugins.php/OSKA/admin/mentees/%s/".$fach_filter."/".$has_oska_filter."/",
+                        'pagelink'     => "plugins.php/OSKA/admin/mentees/%s/".$fach_filter."/".$has_oska_filter."?searchtern=".Request::get('searchterm'),
                     ]) ?>
                 </td>
             </tr>

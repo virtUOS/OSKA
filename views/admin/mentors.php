@@ -94,7 +94,7 @@
                         'perPage'      => $entries_per_page,
                         'num_postings' => $mentors_counter,
                         'page'         => $page,
-                        'pagelink'     => "plugins.php/OSKA/admin/mentors/%s/".$fach_filter."/".$mentee_count."/",
+                        'pagelink'     => "plugins.php/OSKA/admin/mentors/%s/".$fach_filter."/".$mentee_count."?searchterm=".Request::get('searchterm'),
                     ]) ?>
                 </td>
             </tr>
