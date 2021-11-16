@@ -73,7 +73,7 @@
                             'perPage'      => $entries_per_page,
                             'num_postings' => $matches_counter,
                             'page'         => $page,
-                            'pagelink'     => "plugins.php/OSKA/admin/matches/%s/" . $fach_filter . "/",
+                            'pagelink'     => $controller->url_for('admin/matches/%s/' . $fach_filter),
                         ]) ?>
                 </td>
             </tr>

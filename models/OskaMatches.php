@@ -74,12 +74,12 @@ class OskaMatches extends SimpleORMap
 
         return $issues;
     }
-    
+
     public function getMentor($mentee_id)
     {
         return self::findOneBySQL('mentee_id = ?', array($mentee_id));
     }
-    
+
     public function countMatches($fach_selection = null)
     {
         return count(self::findAllMatches(1, null, $fach_selection));
@@ -87,11 +87,11 @@ class OskaMatches extends SimpleORMap
 
     public function findAllMatches($lower_bound = 1, $elements_per_page = null, $fach_id = null)
     {
-    
+
         $matches = [];
-        
+
         $sql = "
-            SELECT 
+            SELECT
                 *
             FROM
                 oska_matches
@@ -99,18 +99,20 @@ class OskaMatches extends SimpleORMap
                 user_studiengang
             ON
                 oska_matches.mentee_id = user_studiengang.user_id";
-        
+
         if($fach_id != null) {
-            $sql .= " WHERE fach_id = '" . $fach_id . "'";
+            $sql .= " WHERE fach_id = :fach_id";
         }
-        
+
         $sql .= " GROUP BY oska_matches.mentee_id";
 
-        if($elements_per_page != null){
-            $sql .= " LIMIT ". $lower_bound. ', '. $elements_per_page;
+        if($elements_per_page != null) {
+            $sql .= " LIMIT :lower_bound, :elements_per_page";
         }
         $statement = DBManager::get()->prepare($sql);
-        $statement->execute($parameters);
+        $statement->execute(['fach_id' => $fach_id,
+                             'lower_bound' => $lower_bound,
+                             'elements_per_page' => $elements_per_page]);
         $matches = $statement->fetchAll();
 
         return $matches;
