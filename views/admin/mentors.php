@@ -94,7 +94,10 @@
                         'perPage'      => $entries_per_page,
                         'num_postings' => $mentors_counter,
                         'page'         => $page,
-                        'pagelink'     => $controller->url_for('admin/mentors/%s/' . $fach_filter . '/' . $mentee_count . ['searchterm' => Request::get('searchterm')]),
+                        'pagelink'     => $controller->url_for('admin/mentors/%s/'
+                                                                . $fach_filter . '/'
+                                                                . $mentee_count,
+                                                                ['searchterm' => Request::get('searchterm')]),
                     ]) ?>
                 </td>
             </tr>

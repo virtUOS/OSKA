@@ -206,12 +206,8 @@ class AdminController extends PluginController {
             );
         }
 
-        foreach($oska_mentors as $mentor){
-            if($search_term) {
-                $user = User::findOneBySQL("user_id = '" . $mentor['user_id'] . "' AND (nachname LIKE '%" . $search_term . "%' OR vorname LIKE '%" . $search_term . "%') ORDER BY nachname");
-            } else {
-                $user = User::find($mentor['user_id']);
-            }
+        foreach($oska_mentors as $mentor) {
+            $user = User::find($mentor['user_id']);
 
             if($user) {
                 $abilities = json_decode($mentor['abilities']);
@@ -278,7 +274,10 @@ class AdminController extends PluginController {
         $search_term = Request::get('search_term') ?: null;
         $fach_id = Request::get('fach_filter') ?: 0;
         $has_oska = Request::get('has_oska_filter') == '' ? null : Request::int('has_oska_filter');
-        $this->redirect($this->url_for('admin/mentees/1/' . $fach_id . '/' . $has_oska, ['searchterm' => ($search_term ?: '')]));
+        $this->redirect($this->url_for('admin/mentees/1/'
+                                        . $fach_id . '/'
+                                        . $has_oska,
+                                        ['searchterm' => ($search_term ?: '')]));
     }
 
     public function fach_filter_mentor_action()
@@ -286,7 +285,10 @@ class AdminController extends PluginController {
         $search_term = Request::get('search_term') ?: null;
         $fach_id = Request::get('fach_filter') ?: 0;
         $mentee_count_filter = Request::get('mentee_count_filter') !== '' ? Request::int('mentee_count_filter') : null;
-        $this->redirect($this->url_for('admin/mentors/1/' . $fach_id . '/' . $mentee_count_filter, ['searchterm' => ($search_term ?: '')]));
+        $this->redirect($this->url_for('admin/mentors/1/'
+                                        . $fach_id . '/'
+                                        . $mentee_count_filter,
+                                        ['searchterm' => ($search_term ?: '')]));
     }
 
     public function matches_filter_action()
