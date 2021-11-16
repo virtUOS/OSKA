@@ -142,23 +142,28 @@ class OskaMentors extends SimpleORMap
             ON
                 oska_mentors.user_id = auth_user_md5.user_id";
         if($fach_id != null) {
-            $sql .= " WHERE fach_id = '" . $fach_id . "'";
+            $sql .= " WHERE fach_id = :fach_id";
         }
         if ($mentee_counter != null) {
             $sql .= $fach_id != null ? " AND" : " WHERE";
-            $sql .= " mentee_counter = $mentee_counter";
+            $sql .= " mentee_counter = :mentee_counter";
         }
         if($search_term != null) {
             $sql .= $fach_id != null || $mentee_counter != null ? " AND" : " WHERE";
-            $sql .= " (nachname LIKE '%" . $search_term . "%' OR vorname LIKE '%" . $search_term . "%')";
+            $sql .= " (nachname LIKE :search_term OR vorname LIKE :search_term)";
         }
         $sql .= " ORDER BY nachname";
 
         if($elements_per_page != null){
-            $sql .= " LIMIT ". $lower_bound. ', '. $elements_per_page;
+            $sql .= " LIMIT :lower_bound, :elements_per_page";
         }
 
         $statement = DBManager::get()->prepare($sql);
+        $statement->execute(['fach_id' => $fach_id,
+                             'mentee_counter' => $mentee_counter,
+                             'search_term' => '%'.$search_term.'%',
+                             'lower_bound' => $lower_bound,
+                             'elements_per_page' => $elements_per_page]);
         $statement->execute($parameters);
         $mentors = $statement->fetchAll();
 
